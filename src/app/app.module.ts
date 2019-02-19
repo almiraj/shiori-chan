@@ -3,9 +3,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { OnsenModule } from 'ngx-onsenui';
 
 import { environment } from '../environments/environment';
-import { AppComponent } from '../app/app.component';
-import { PlanComponent } from '../app/plan.component';
-import { PlanDetailComponent } from '../app/plan-detai.component';
+import { AppComponent } from './component/app.component';
+import { PlanComponent } from './component/plan.component';
+import { PlanDetailComponent } from './component/plan-detai.component';
+import { PlanService } from './service/plan.service';
 
 if (environment.production) {
   enableProdMode();
@@ -20,6 +21,9 @@ if (environment.production) {
     AppComponent,
     PlanComponent,
     PlanDetailComponent,
+  ],
+  providers: [
+    PlanService,
   ],
   entryComponents: [
     PlanComponent,

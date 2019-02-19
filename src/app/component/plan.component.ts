@@ -1,9 +1,9 @@
 import { Component, OnsNavigator } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
-import { PlanDetailComponent } from './plan-detai.component';
-import { Plan } from './entity/plan';
-import { PlanTheme } from './entity/plan-theme';
+import { PlanDetailComponent } from '../component/plan-detai.component';
+import { Plan } from '../entity/plan';
+import { PlanTheme } from '../entity/plan-theme';
 
 @Component({
   selector: 'ons-page[page]',

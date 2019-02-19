@@ -1,8 +1,8 @@
 import { Component, OnsNavigator, Params } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
-import { Plan } from './entity/plan';
-import { PlanComponent } from './plan.component';
+import { PlanComponent } from '../component/plan.component';
+import { Plan } from '../entity/plan';
 
 @Component({
   selector: 'ons-page[page]',
@@ -106,7 +106,7 @@ export class PlanDetailComponent {
       message: 'This dialog can be canceled by tapping the background or using the back button on your device.',
       cancelable: true,
       callback: i => {
-        if (i == -1) {
+        if (i === -1) {
           ons.notification.alert({message: 'You canceled it!'});
         }
       }

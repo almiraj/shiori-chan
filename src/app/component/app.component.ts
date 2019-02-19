@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { OnsSplitterContent, OnsSplitterSide } from 'ngx-onsenui';
 
-import { PlanComponent } from './plan.component';
+import { PlanComponent } from '../component/plan.component';
 
 @Component({
   selector: 'app-component',
