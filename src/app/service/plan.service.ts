@@ -54,11 +54,13 @@ export class PlanService {
       const row = new ScheduleRowPlace();
       row.fromTime = '11:00';
       row.description = '家を出る';
+      row.memo = '持ち物を忘れないように\n最悪でも11:15には出ること';
       return row;
     })());
     p.schedules[0].rows.push((() => {
       const row = new ScheduleRowMoving();
       row.description = '徒歩';
+      row.interval = '8分';
       return row;
     })());
     p.schedules[0].rows.push((() => {
@@ -70,6 +72,8 @@ export class PlanService {
     p.schedules[0].rows.push((() => {
       const row = new ScheduleRowMoving();
       row.description = '都営新宿線';
+      row.memo = '〇〇駅で乗り換え';
+      row.interval = '1時間';
       row.viechle = ViechleType.TRAIN;
       row.url = 'https://transit.yahoo.co.jp/search/result?flatlon=&from=%E5%B0%8F%E5%B7%9D%E7%94%BA&tlatlon=&to=%E6%96%B0%E5%AE%BF&viacode=&via=&viacode=&via=&viacode=&via=&y=2019&m=02&d=19&hh=15&m2=3&m1=0&type=1&ticket=ic&expkind=1&ws=3&row=0&al=1&shin=1&ex=1&hb=1&lb=1&sr=1&kw=%E6%96%B0%E5%AE%BF';
       return row;

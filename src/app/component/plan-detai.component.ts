@@ -38,10 +38,27 @@ import { FormGroup, FormControl } from '@angular/forms';
             </div>
           </ons-carousel-cover>
           <ons-carousel #carousel fullscreen swipeable auto-scroll overscrollable (postchange)="selectSchedule()">
-            <ons-carousel-item style="background-color: #085078;" *ngFor="let schedule of plan.schedules; let i = index">
+            <ons-carousel-item *ngFor="let schedule of plan.schedules; let i = index">
               <ons-card>
                 <div class="title">{{schedule.name}}</div>
-                <div class="content">asdf</div>
+                <div class="content">
+                  <ons-list>
+                    <ons-list-item *ngFor="let row of schedule.rows; let i = index"
+                        [ngClass]="{'moving': row.isMoving}">
+                      <div *ngIf="!row.isMoving">
+                        {{row.fromTime}}
+                        <div *ngIf="row.toTime">～{{row.toTime}}</div>
+                        {{row.description}}
+                        <p class="memo pre">{{row.memo}}</p>
+                      </div>
+                      <div *ngIf="row.isMoving">
+                        {{row.description}}
+                        <span *ngIf="row.interval"> ({{row.interval}})</span>
+                        <p class="memo pre">{{row.memo}}</p>
+                        </div>
+                    </ons-list-item>
+                  </ons-list>
+                </div>
               </ons-card>
             </ons-carousel-item>
           </ons-carousel>
@@ -51,8 +68,11 @@ import { FormGroup, FormControl } from '@angular/forms';
   `,
   styles: [
     '.pre { white-space: pre-wrap; }',
+    'ons-carousel { margin-bottom: 100%; }',
     '#carousel-button { text-align: center; }',
-    '#carousel-button .radio-button { display: inline-block; margin-right: 0.1em; margin-left: 0.1em; }'
+    '#carousel-button .radio-button { display: inline-block; margin-right: 0.1em; margin-left: 0.1em; }',
+    '.moving { border-left: 2px solid #ccc; }',
+    '.memo { font-size: 0.8em; }',
   ]
 })
 export class PlanDetailComponent {
