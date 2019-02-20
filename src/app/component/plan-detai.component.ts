@@ -43,20 +43,14 @@ import { FormGroup, FormControl } from '@angular/forms';
                 <div class="title">{{schedule.name}}</div>
                 <div class="content">
                   <ons-list>
-                    <ons-list-item *ngFor="let row of schedule.rows; let i = index"
-                        [ngClass]="{'moving': row.isMoving}">
+                    <div *ngFor="let row of schedule.rows; let i = index">
                       <div *ngIf="!row.isMoving">
-                        {{row.fromTime}}
-                        <div *ngIf="row.toTime">～{{row.toTime}}</div>
-                        {{row.description}}
-                        <p class="memo pre">{{row.memo}}</p>
+                        <app-schedule-row-place [row]="row"></app-schedule-row-place>
                       </div>
                       <div *ngIf="row.isMoving">
-                        {{row.description}}
-                        <span *ngIf="row.interval"> ({{row.interval}})</span>
-                        <p class="memo pre">{{row.memo}}</p>
-                        </div>
-                    </ons-list-item>
+                        <app-schedule-row-moving [row]="row"></app-schedule-row-moving>
+                      </div>
+                    </div>
                   </ons-list>
                 </div>
               </ons-card>
@@ -71,7 +65,6 @@ import { FormGroup, FormControl } from '@angular/forms';
     'ons-carousel { margin-bottom: 100%; }',
     '#carousel-button { text-align: center; }',
     '#carousel-button .radio-button { display: inline-block; margin-right: 0.1em; margin-left: 0.1em; }',
-    '.moving { border-left: 2px solid #ccc; }',
     '.memo { font-size: 0.8em; }',
   ]
 })

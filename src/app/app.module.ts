@@ -8,6 +8,8 @@ import { AppComponent } from './component/app.component';
 import { PlanComponent } from './component/plan.component';
 import { PlanDetailComponent } from './component/plan-detai.component';
 import { PlanService } from './service/plan.service';
+import { ScheduleRowPlaceComponent } from './component/schedule-row-place.component';
+import { ScheduleRowMovingComponent } from './component/schedule-row-moving.component';
 
 if (environment.production) {
   enableProdMode();
@@ -24,6 +26,8 @@ if (environment.production) {
     AppComponent,
     PlanComponent,
     PlanDetailComponent,
+    ScheduleRowPlaceComponent,
+    ScheduleRowMovingComponent,
   ],
   providers: [
     PlanService,
@@ -31,6 +35,8 @@ if (environment.production) {
   entryComponents: [
     PlanComponent,
     PlanDetailComponent,
+    ScheduleRowPlaceComponent,
+    ScheduleRowMovingComponent,
   ],
   bootstrap: [
     AppComponent,
