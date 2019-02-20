@@ -1,7 +1,8 @@
 import { Component, OnsNavigator } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
-import { PlanDetailComponent } from '../component/plan-detai.component';
+import { PlanDetailComponent } from './plan-detai.component';
+import { PlanService } from '../service/plan.service';
 import { Plan } from '../entity/plan';
 import { PlanTheme } from '../entity/plan-theme';
 
@@ -15,21 +16,17 @@ import { PlanTheme } from '../entity/plan-theme';
         </div>
         <div class="center">Navigation</div>
         <div class="right">
-          <ons-toolbar-button (click)="confirm()">＋</ons-toolbar-button>
+          <ons-toolbar-button (click)="createPlan()">＋</ons-toolbar-button>
         </div>
       </ons-toolbar>
       <div class="content">
-        <ons-list>
-          <ons-list-header>プラン</ons-list-header>
-          <ons-list-item modifier="chevron" tappable *ngFor="let plan of plans" (click)="toDetail(plan)">{{plan.name}}</ons-list-item>
-          <ons-list-item tappable (click)="confirm()">Confirmation</ons-list-item>
-          <ons-list-item tappable (click)="prompt()">Prompt</ons-list-item>
-          <ons-list-item tappable (click)="toast()">Toast</ons-list-item>
-
-          <ons-list-header>Components</ons-list-header>
-          <ons-list-item tappable (click)="dialog.show()">Simple Dialog</ons-list-item>
-          <ons-list-item tappable (click)="alertDialog.show()">Alert Dialog</ons-list-item>
-          </ons-list>
+        <div class="plan-card list-item--chevron" *ngFor="let plan of plans" (click)="toDetail(plan)">
+          <ons-card>
+            <ons-ripple></ons-ripple>
+            <img src="https://monaca.io/img/logos/download_image_onsenui_01.png">
+            <div class="title">{{plan.name}}</div>
+          </ons-card>
+        </div>
       </div>
     </ons-page>
 
@@ -65,54 +62,34 @@ import { PlanTheme } from '../entity/plan-theme';
       </div>
     </ons-alert-dialog>
   `,
-  styles: []
+  styles: [
+    '.plan-card { position: relative; }',
+    '.plan-card > ons-card { text-align: center; padding: 16px 20px; }',
+    '.plan-card > ons-card > div { text-align: left; }',
+    '.plan-card img { width: 100%; }',
+  ]
 })
 export class PlanComponent {
-  plans: Array<Plan> = [];
+  plans: Plan[];
 
-  constructor(private navi: OnsNavigator) {
-    if (this.plans.length === 0) {
-      const samplePlan = new Plan();
-      samplePlan.name = 'プラン１';
-      samplePlan.theme = PlanTheme.SEA;
-      this.plans.push(samplePlan);
-    }
+  constructor(private navi: OnsNavigator, private planService: PlanService) {
+    planService.getPlans().then(plans => this.plans = plans);
   }
 
   toDetail(plan: Plan) {
     this.navi.element.pushPage(PlanDetailComponent, {data: plan});
   }
 
-  alert() {
-    ons.notification.alert('Hello, world!');
-  }
-
-  confirm() {
-    ons.notification.confirm({
-      message: 'This dialog can be canceled by tapping the background or using the back button on your device.',
-      cancelable: true,
-      callback: i => {
-        if (i == -1) {
-          ons.notification.alert({message: 'You canceled it!'});
-        }
-      }
-    });
-  }
-
-  prompt() {
+  createPlan() {
     ons.notification.prompt({
-      message: 'What is the meaning of Life, the Universe and Everything?',
-      callback: answer => {
-        if (answer === '42') {
-          ons.notification.alert({message: 'That\'s the correct answer!'});
-        } else {
-          ons.notification.alert({message: 'Incorrect! Please try again!'});
+      cancelable: true,
+      title: '',
+      message: 'プラン名を入力してください',
+      callback: (name: string) => {
+        if (name) {
+          this.planService.createPlan(name).then(p => this.plans.push(p));
         }
       }
     });
-  }
-
-  toast() {
-    ons.notification.toast('Hello, world!', {timeout: 2000});
   }
 }

@@ -1,11 +1,12 @@
-// import * as moment from 'moment';
-
 import { PlanTheme } from './plan-theme';
+import { Schedule } from './schedule';
 
 export class Plan {
-  id: String;
-  name: String;
+  id: string;
+  name: string;
   theme: PlanTheme;
-  fromYmd: String;
-  toYmd: String;
+  fromYmd: string;
+  toYmd: string;
+  baggage: string;
+  schedules: Schedule[];
 }

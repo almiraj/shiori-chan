@@ -1,10 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { OnsSplitterContent, OnsSplitterSide } from 'ngx-onsenui';
 
-import { PlanComponent } from '../component/plan.component';
+import { PlanComponent } from './plan.component';
 
 @Component({
-  selector: 'app-component',
+  selector: 'app-root',
   template: `
     <ons-navigator swipeable [page]="page"></ons-navigator>
   `,

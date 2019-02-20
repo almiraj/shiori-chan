@@ -1,8 +1,10 @@
-import { Component, OnsNavigator, Params } from 'ngx-onsenui';
+import { Component, OnsNavigator, Params, ViewChild, ElementRef } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
-import { PlanComponent } from '../component/plan.component';
+import { PlanComponent } from './plan.component';
 import { Plan } from '../entity/plan';
+import { Schedule } from '../entity/schedule';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'ons-page[page]',
@@ -20,81 +22,54 @@ import { Plan } from '../entity/plan';
       <div class="content">
         <ons-card>
           <img src="https://monaca.io/img/logos/download_image_onsenui_01.png" alt="Onsen UI" style="width: 100%">
-          <div class="title">
-            {{plan.name}}
-          </div>
+          <div class="title">{{plan.name}}</div>
         </ons-card>
         <ons-card>
-          <div class="title">
-            持ち物
-          </div>
-          <textarea class="textarea" rows="3"></textarea>
+          <div class="title">持ち物・メモ書き</div>
+          <div class="content pre">{{plan.baggage}}</div>
         </ons-card>
-
-        <ons-list>
-          <ons-list-header>{{plan.name}}</ons-list-header>
-          <ons-list-item tappable (click)="confirm()">Confirmation</ons-list-item>
-          <ons-list-item tappable (click)="prompt()">Prompt</ons-list-item>
-          <ons-list-item tappable (click)="toast()">Toast</ons-list-item>
-
-          <ons-list-header>Components</ons-list-header>
-          <ons-list-item tappable (click)="dialog.show()">Simple Dialog</ons-list-item>
-          <ons-list-item tappable (click)="alertDialog.show()">Alert Dialog</ons-list-item>
-
-          <ons-list-header>Components</ons-list-header>
-          <ons-list-item tappable (click)="dialog.show()">Simple Dialog</ons-list-item>
-          <ons-list-item tappable (click)="alertDialog.show()">Alert Dialog</ons-list-item>
-
-          <ons-list-header>Components</ons-list-header>
-          <ons-list-item tappable (click)="dialog.show()">Simple Dialog</ons-list-item>
-          <ons-list-item tappable (click)="alertDialog.show()">Alert Dialog</ons-list-item>
-
-          <ons-list-header>Components</ons-list-header>
-          <ons-list-item tappable (click)="dialog.show()">Simple Dialog</ons-list-item>
-          <ons-list-item tappable (click)="alertDialog.show()">Alert Dialog</ons-list-item>
-          </ons-list>
+        <div class="content">
+          <ons-carousel-cover>
+            <div id="carousel-button">
+              <label class="radio-button radio-button--material" *ngFor="let schedule of plan.schedules; let i = index">
+                <ons-radio name="schedules" modifier="material" (change)="swipeSchedule(i)"
+                  name="scheduleIdx" [attr.value]="i" [checked]="i == scheduleIdx"></ons-radio>
+              </label>
+            </div>
+          </ons-carousel-cover>
+          <ons-carousel #carousel fullscreen swipeable auto-scroll overscrollable (postchange)="selectSchedule()">
+            <ons-carousel-item style="background-color: #085078;" *ngFor="let schedule of plan.schedules; let i = index">
+              <ons-card>
+                <div class="title">{{schedule.name}}</div>
+                <div class="content">asdf</div>
+              </ons-card>
+            </ons-carousel-item>
+          </ons-carousel>
+        </div>
       </div>
     </ons-page>
-
-    <!-- must be located just under an outermost box such as body element -->
-    <ons-dialog animation="default" cancelable #dialog>
-      <div class="dialog-mask"></div>
-        <div class="dialog">
-          <div class="dialog-container" style="height: 200px;">
-            <ons-page>
-              <ons-toolbar>
-                <div class="center">Name</div>
-              </ons-toolbar>
-              <div class="content">
-                <div style="text-align: center">
-                  <p>This is just an example.</p>
-                  <br>
-                  <ons-button (click)="dialog.hide()">Close</ons-button>
-                </div>
-              </div>
-            </ons-page>
-          </div>
-        </div>
-    </ons-dialog>
-
-    <!-- must be located just under an outermost box such as body element -->
-    <ons-alert-dialog cancelable #alertDialog>
-      <div class="alert-dialog-title">Warning!</div>
-      <div class="alert-dialog-content">
-        This is just an example.
-      </div>
-      <div class="alert-dialog-footer">
-        <ons-alert-dialog-button (click)="alertDialog.hide()">OK</ons-alert-dialog-button>
-      </div>
-    </ons-alert-dialog>
   `,
-  styles: []
+  styles: [
+    '.pre { white-space: pre-wrap; }',
+    '#carousel-button { text-align: center; }',
+    '#carousel-button .radio-button { display: inline-block; margin-right: 0.1em; margin-left: 0.1em; }'
+  ]
 })
 export class PlanDetailComponent {
+  @ViewChild('carousel') carousel: ElementRef;
   plan: Plan;
+  scheduleIdx = 0;
 
   constructor(navigator: OnsNavigator, params: Params) {
     this.plan = params.data;
+  }
+
+  swipeSchedule(i: number) {
+    this.carousel.nativeElement.setActiveIndex(i);
+  }
+
+  selectSchedule() {
+    this.scheduleIdx = this.carousel.nativeElement.getActiveIndex();
   }
 
   alert() {
