@@ -1,4 +1,4 @@
-import { Component, Input, OnsNavigator } from 'ngx-onsenui';
+import { Component, Input, OnsNavigator, ElementRef, ViewChildren, DoCheck } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
 import { ScheduleRow } from '../entity/schedule-row';
@@ -12,21 +12,24 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
       <div class="rel">
         <span *ngIf="placeRow && !isEdit">
           {{placeRow.fromTime}}
-          <span *ngIf="placeRow.toTime">- {{placeRow.toTime}}</span>
+          <span *ngIf="placeRow.fromTime != placeRow.toTime">- {{placeRow.toTime}}</span>
         </span>
         <span *ngIf="placeRow && isEdit">
-          <ons-input type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="setToTime()"></ons-input>
+          <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="setToTime()"></ons-input>
           ～
-          <ons-input type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
+          <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
         </span>
         <span *ngIf="!isEdit">
           {{row.description}}
         </span>
         <span *ngIf="isEdit">
-        <ons-input type="text" modifier="material underbar" [(ngModel)]="row.description"></ons-input>
+        <ons-input #inp type="text" modifier="material underbar" [(ngModel)]="row.description"></ons-input>
         </span>
         <span *ngIf="movingRow && movingRow.interval"> ({{movingRow.interval}})</span>
-        <div class="url-icon" *ngIf="row.url"><a [href]="row.url" target="_blank"><i class="fas fa-external-link-alt"></i></a></div>
+        <div class="url-icon" *ngIf="row.url"><a [href]="row.url" target="_blank">
+          <i *ngIf="placeRow" class="far fa-compass"></i>
+          <i *ngIf="movingRow" class="fas fa-external-link-alt"></i>
+        </a></div>
       </div>
       <div class="memo pre">{{row.memo}}</div>
     </ons-list-item>
@@ -41,7 +44,8 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
     '.moving { border-left: 2px solid #ccc; }',
   ]
 })
-export class ScheduleRowComponent {
+export class ScheduleRowComponent implements DoCheck {
+  @ViewChildren('inp') inp: ElementRef;
   private _row: ScheduleRow;
   private _isEdit: boolean;
   private _prevFromTime: string;
@@ -78,6 +82,17 @@ export class ScheduleRowComponent {
     return this._isEdit;
   }
 
+  ngDoCheck() {
+    // ons-inputが動的に生成してくるinputのstyleを強引に書き換える
+    if (this.inp) {
+      this.inp['_results'].forEach((elem: ElementRef) => {
+        const inputElement = elem.nativeElement.childNodes[1];
+        if (inputElement && inputElement.nodeName === 'INPUT') {
+          inputElement.style.fontSize = 'inherit';
+        }
+      });
+    }
+  }
   setToTime() {
     if (!this.placeRow.toTime || this.placeRow.toTime === this._prevFromTime) {
       this.placeRow.toTime = this.placeRow.fromTime;
