@@ -25,11 +25,15 @@ import { FormGroup, FormControl } from '@angular/forms';
           <div class="title">{{plan.name}}</div>
         </ons-card>
         <ons-card #buggage>
-          <div *ngIf="!buggage.edit" class="pencil" (click)="buggage.edit = !buggage.edit"><i class="fas fa-pencil-alt"></i></div>
-          <div *ngIf="buggage.edit" class="pencil envelope" (click)="buggage.edit = !buggage.edit"><i class="fas fa-envelope"></i></div>
+          <div *ngIf="!buggage.isEdit" class="pencil" (click)="buggage.isEdit = !buggage.isEdit">
+            <i class="fas fa-pencil-alt"></i>
+          </div>
+          <div *ngIf="buggage.isEdit" class="pencil envelope" (click)="buggage.isEdit = !buggage.isEdit">
+            <i class="fas fa-envelope"></i>
+          </div>
           <div class="title">持ち物・メモ書き</div>
           <div class="content toggleArea">
-            <div *ngIf="buggage.edit" style="position: absolute; width: 100%; height: 100%;">
+            <div *ngIf="buggage.isEdit" style="position: absolute; width: 100%; height: 100%;">
               <textarea [(ngModel)]="plan.baggage"></textarea>
             </div>
             <div class="content pre">{{plan.baggage}}</div>
@@ -46,12 +50,18 @@ import { FormGroup, FormControl } from '@angular/forms';
           </ons-carousel-cover>
           <ons-carousel #carousel fullscreen swipeable auto-scroll overscrollable (postchange)="selectSchedule()">
             <ons-carousel-item *ngFor="let schedule of plan.schedules; let i = index">
-              <ons-card>
+              <ons-card #sche>
+                <div *ngIf="!sche.isEdit" class="pencil" (click)="sche.isEdit = !sche.isEdit">
+                  <i class="fas fa-pencil-alt"></i>
+                </div>
+                <div *ngIf="sche.isEdit" class="pencil envelope" (click)="sche.isEdit = !sche.isEdit">
+                  <i class="fas fa-envelope"></i>
+                </div>
                 <div class="title">{{schedule.name}}</div>
                 <div class="content">
                   <ons-list>
                     <div *ngFor="let row of schedule.rows; let i = index">
-                      <app-schedule-row [row]="row"></app-schedule-row>
+                      <app-schedule-row [row]="row" [isEdit]="sche.isEdit"></app-schedule-row>
                     </div>
                   </ons-list>
                 </div>

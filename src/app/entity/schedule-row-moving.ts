@@ -4,8 +4,8 @@ import { ViechleType } from './viechle-type';
 export class ScheduleRowMoving implements ScheduleRow {
   isMoving = true;
   description: string;
-  url: string;
   memo: string;
+  url: string;
   viechle: ViechleType;
   interval: string;
 }
