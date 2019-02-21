@@ -24,9 +24,16 @@ import { FormGroup, FormControl } from '@angular/forms';
           <img src="https://monaca.io/img/logos/download_image_onsenui_01.png" alt="Onsen UI" style="width: 100%">
           <div class="title">{{plan.name}}</div>
         </ons-card>
-        <ons-card>
+        <ons-card #buggage>
+          <div *ngIf="!buggage.edit" class="pencil" (click)="buggage.edit = !buggage.edit"><i class="fas fa-pencil-alt"></i></div>
+          <div *ngIf="buggage.edit" class="pencil envelope" (click)="buggage.edit = !buggage.edit"><i class="fas fa-envelope"></i></div>
           <div class="title">持ち物・メモ書き</div>
-          <div class="content pre">{{plan.baggage}}</div>
+          <div class="content toggleArea">
+            <div *ngIf="buggage.edit" style="position: absolute; width: 100%; height: 100%;">
+              <textarea [(ngModel)]="plan.baggage"></textarea>
+            </div>
+            <div class="content pre">{{plan.baggage}}</div>
+          </div>
         </ons-card>
         <div class="content">
           <ons-carousel-cover>
@@ -56,11 +63,16 @@ import { FormGroup, FormControl } from '@angular/forms';
     </ons-page>
   `,
   styles: [
+    'ons-card { position: relative; padding-bottom: 20px; }',
+    'ons-card > .pencil { position: absolute; top: 6px; right: 6px; font-size: 1.2em; color: #0076ff; }',
+    'ons-card > .envelope { color: #ff1a33; }',
+    '.toggleArea { position: relative; }',
+    '.toggleArea textarea { width: 100%; height: 100%; margin: 0; padding: 0; border-width: 0 4px 0 0; border-color: #ff1a33; }',
+    '.toggleArea textarea { font-family: -apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif; }',
     '.pre { white-space: pre-wrap; }',
     'ons-carousel { margin-bottom: 100%; }',
     '#carousel-button { text-align: center; }',
     '#carousel-button .radio-button { display: inline-block; margin-right: 0.1em; margin-left: 0.1em; }',
-    '.memo { font-size: 0.8em; }',
   ]
 })
 export class PlanDetailComponent {

@@ -22,10 +22,10 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
     </ons-list-item>
   `,
   styles: [
-    '.pre { white-space: pre-wrap; }',
     '.main { width: 100%; position: relative; }',
     '.right-icon { position: absolute; top: 0; right: 0; line-height: 1.2em; }',
     '.memo { font-size: 0.8em; }',
+    '.pre { white-space: pre-wrap; }',
     '.moving { border-left: 2px solid #ccc; }',
   ]
 })
