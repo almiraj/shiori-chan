@@ -44,12 +44,7 @@ import { FormGroup, FormControl } from '@angular/forms';
                 <div class="content">
                   <ons-list>
                     <div *ngFor="let row of schedule.rows; let i = index">
-                      <div *ngIf="!row.isMoving">
-                        <app-schedule-row-place [row]="row"></app-schedule-row-place>
-                      </div>
-                      <div *ngIf="row.isMoving">
-                        <app-schedule-row-moving [row]="row"></app-schedule-row-moving>
-                      </div>
+                      <app-schedule-row [row]="row"></app-schedule-row>
                     </div>
                   </ons-list>
                 </div>
