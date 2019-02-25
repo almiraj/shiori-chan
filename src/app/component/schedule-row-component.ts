@@ -10,36 +10,40 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
   template: `
     <ons-list-item [ngClass]="{ 'isEdit': isEdit, 'moving': row.isMoving }">
       <div class="rel">
-        <span *ngIf="placeRow && !isEdit">
+        <div *ngIf="placeRow && !isEdit" class="fromToTime">
           {{placeRow.fromTime}}
           <span *ngIf="placeRow.fromTime != placeRow.toTime">- {{placeRow.toTime}}</span>
-        </span>
-        <span *ngIf="placeRow && isEdit">
+        </div>
+        <div *ngIf="placeRow && isEdit" class="fromToTime">
           <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="setToTime()"></ons-input>
-          ～
+          <br>
           <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
-        </span>
-        <span *ngIf="!isEdit">
+        </div>
+        <div *ngIf="!isEdit" class="desc">
           {{row.description}}
-        </span>
-        <span *ngIf="isEdit">
-        <ons-input #inp type="text" modifier="material underbar" [(ngModel)]="row.description"></ons-input>
-        </span>
-        <span *ngIf="movingRow && movingRow.interval"> ({{movingRow.interval}})</span>
+          <div class="memo pre">{{row.memo}}</div>
+        </div>
+        <div *ngIf="isEdit" class="desc">
+          <ons-input #inp class="desc-inp" type="text" modifier="material underbar" [(ngModel)]="row.description"></ons-input>
+          <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
+        </div>
+        <div *ngIf="movingRow && movingRow.interval"> ({{movingRow.interval}})</div>
         <div class="url-icon" *ngIf="row.url"><a [href]="row.url" target="_blank">
           <i *ngIf="placeRow" class="far fa-compass"></i>
           <i *ngIf="movingRow" class="fas fa-external-link-alt"></i>
         </a></div>
       </div>
-      <div class="memo pre">{{row.memo}}</div>
     </ons-list-item>
   `,
   styles: [
-    'ons-input { margin-top: 1em; margin-bottom: 0.5em; }',
+    // 'ons-input { margin-top: 1em; margin-bottom: 0.5em; }',
     '.isEdit { border-bottom: 2px dotted #ff1a33; }',
     '.rel { width: 100%; position: relative; }',
     '.url-icon { position: absolute; top: 0; right: 0; line-height: 1.2em; }',
-    '.memo { font-size: 0.8em; }',
+    '.fromToTime { display: inline-block; }',
+    '.desc { display: inline-block; vertical-align: top; margin-left: 1em; width: 70%; }',
+    '.memo { font-size: 0.8em; width: 100%; }',
+    'textarea.memo { height: 3.4em; }',
     '.pre { white-space: pre-wrap; }',
     '.moving { border-left: 2px solid #ccc; }',
   ]
@@ -89,6 +93,7 @@ export class ScheduleRowComponent implements DoCheck {
         const inputElement = elem.nativeElement.childNodes[1];
         if (inputElement && inputElement.nodeName === 'INPUT') {
           inputElement.style.fontSize = 'inherit';
+          inputElement.style.fontFamily = '-apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif';
         }
       });
     }
