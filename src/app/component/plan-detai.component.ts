@@ -61,7 +61,7 @@ import { FormGroup, FormControl } from '@angular/forms';
                 <div class="content">
                   <ons-list>
                     <div *ngFor="let row of schedule.rows; let i = index">
-                      <app-schedule-row [row]="row" [isEdit]="sche.isEdit"></app-schedule-row>
+                      <app-schedule-row [schedule]="schedule" [row]="row" [isEdit]="sche.isEdit"></app-schedule-row>
                     </div>
                   </ons-list>
                 </div>
@@ -80,7 +80,7 @@ import { FormGroup, FormControl } from '@angular/forms';
     '.toggleArea textarea { width: 100%; height: 100%; margin: 0; padding: 0; border-width: 0 4px 0 0; border-color: #ff1a33; }',
     '.toggleArea textarea { font-family: -apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif; }',
     '.pre { white-space: pre-wrap; }',
-    'ons-carousel { margin-bottom: 100%; }',
+    'ons-carousel { margin-bottom: 1em; }',
     '#carousel-button { text-align: center; }',
     '#carousel-button .radio-button { display: inline-block; margin-right: 0.1em; margin-left: 0.1em; }',
   ]
