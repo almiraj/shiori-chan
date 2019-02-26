@@ -16,7 +16,7 @@ import { FormGroup, FormControl } from '@angular/forms';
         </div>
         <div class="center">Navigation</div>
         <div class="right">
-          <ons-toolbar-button (click)="confirm()">share</ons-toolbar-button>
+          <ons-toolbar-button>share</ons-toolbar-button>
         </div>
       </ons-toolbar>
       <div class="content">
@@ -43,8 +43,8 @@ import { FormGroup, FormControl } from '@angular/forms';
           <ons-carousel-cover>
             <div id="carousel-button">
               <label class="radio-button radio-button--material" *ngFor="let schedule of plan.schedules; let i = index">
-                <ons-radio name="schedules" modifier="material" (change)="swipeSchedule(i)"
-                  name="scheduleIdx" [attr.value]="i" [checked]="i == scheduleIdx"></ons-radio>
+                <ons-radio name="scheduleIdx" modifier="material" (change)="swipeSchedule(i)"
+                  [attr.value]="i" [checked]="i == scheduleIdx"></ons-radio>
               </label>
             </div>
           </ons-carousel-cover>

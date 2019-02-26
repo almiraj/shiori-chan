@@ -6,38 +6,81 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
 import { PlanDetailComponent } from './plan-detai.component';
 import { Schedule } from '../entity/schedule';
+import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
 
 @Component({
   selector: 'app-schedule-row',
   template: `
-    <ons-list-item [ngClass]="{ 'isEdit': isEdit, 'moving': row.isMoving }">
+    <ons-list-item [ngClass]="{ 'edit-item': isEdit }">
       <div class="rel">
-        <div *ngIf="isEdit">
-          <div class="right-icon" (click)="confirm()">
-            <i class="far fa-window-close"></i>
-          </div>
-        </div>
-        <div class="left-icon">
+        <div *ngIf="placeRow" class="left-icon"
+            [ngClass]="{ 'left-icon-edit': isEdit, 'with-to-time': placeRow.fromTime !== placeRow.toTime }">
           <i class="fas fa-flag-checkered"></i>
+        </div>
+        <div *ngIf="movingRow && isEdit" class="left-icon-viechle">
+          <label *ngFor="let v of ViechleTypeUtil.values(); let i = index" (change)="changeViechle(v)">
+            <input type="radio" [name]="'viechleTypes-' + i" [value]="movingRow.viechleType" [checked]="v === movingRow.viechleType">
+            <i [ngClass]="{
+              'fas': true,
+              'fa-walking': v === ViechleType.WALK,
+              'fa-swimmer': v === ViechleType.SWIMMER,
+              'fa-bicycle': v === ViechleType.BICYCLE,
+              'fa-motorcycle': v === ViechleType.MOTORCYCLE,
+              'fa-car': v === ViechleType.CAR,
+              'fa-taxi': v === ViechleType.TAXI,
+              'fa-bus-alt': v === ViechleType.BUS,
+              'fa-train': v === ViechleType.TRAIN,
+              'fa-plane': v === ViechleType.AIRPLAIN,
+              'fa-ship': v === ViechleType.SHIP,
+              'fa-tram': v === ViechleType.TRAM,
+              'fa-helicopter': v === ViechleType.HELICOPTER,
+              'selected': v === movingRow.viechleType
+            }"></i>
+          </label>
         </div>
         <div *ngIf="placeRow && !isEdit" class="fromToTime">
           {{placeRow.fromTime}}
-          <span *ngIf="placeRow.fromTime != placeRow.toTime">- {{placeRow.toTime}}</span>
+          <br>
+          <span *ngIf="placeRow.fromTime != placeRow.toTime">{{placeRow.toTime}}</span>
         </div>
         <div *ngIf="placeRow && isEdit" class="fromToTime">
           <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="setToTime()"></ons-input>
           <br>
           <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
         </div>
-        <div *ngIf="!isEdit" class="description">
-          {{row.description}}
+        <div *ngIf="movingRow && !isEdit" class="viechle-type">
+          <i [ngClass]="{
+            'fas': true,
+            'fa-walking': movingRow.viechleType === ViechleType.WALK,
+            'fa-swimmer': movingRow.viechleType === ViechleType.SWIMMER,
+            'fa-bicycle': movingRow.viechleType === ViechleType.BICYCLE,
+            'fa-motorcycle': movingRow.viechleType === ViechleType.MOTORCYCLE,
+            'fa-car': movingRow.viechleType === ViechleType.CAR,
+            'fa-taxi': movingRow.viechleType === ViechleType.TAXI,
+            'fa-bus-alt': movingRow.viechleType === ViechleType.BUS,
+            'fa-train': movingRow.viechleType === ViechleType.TRAIN,
+            'fa-plane': movingRow.viechleType === ViechleType.AIRPLAIN,
+            'fa-ship': movingRow.viechleType === ViechleType.SHIP,
+            'fa-tram': movingRow.viechleType === ViechleType.TRAM,
+            'fa-helicopter': movingRow.viechleType === ViechleType.HELICOPTER
+          }"></i>
+        </div>
+        <div *ngIf="placeRow && !isEdit" class="description" [ngClass]="{ 'with-to-time': placeRow.fromTime !== placeRow.toTime }">
+          {{placeRow.description}}
           <div class="memo pre">{{row.memo}}</div>
         </div>
-        <div *ngIf="isEdit" class="descriptionEdit">
-          <ons-input #inp type="text" modifier="material underbar" [(ngModel)]="row.description"></ons-input>
+        <div *ngIf="movingRow && !isEdit" class="description interval">
+          ({{movingRow.getIntervalLabel()}})
+          <div class="memo pre">{{row.memo}}</div>
+        </div>
+        <div *ngIf="placeRow && isEdit" class="description-edit">
+          <ons-input #inp type="text" modifier="material underbar" [(ngModel)]="placeRow.description"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
-        <div *ngIf="movingRow && movingRow.interval"> ({{movingRow.interval}})</div>
+        <div *ngIf="movingRow && isEdit" class="description-edit">
+          所要時間：<ons-input #inp type="time" modifier="material underbar" [(ngModel)]="movingRow.interval"></ons-input>
+          <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
+        </div>
         <div *ngIf="!isEdit">
           <div class="right-icon" *ngIf="row.url">
             <a [href]="row.url" target="_blank">
@@ -46,24 +89,36 @@ import { Schedule } from '../entity/schedule';
             </a>
           </div>
         </div>
+        <div *ngIf="isEdit">
+          <div class="right-icon" (click)="confirmDelete()">
+            <i class="far fa-window-close"></i>
+          </div>
+        </div>
       </div>
     </ons-list-item>
   `,
   styles: [
     'ons-list-item { padding: 0; }',
+    'ons-list-item.edit-item { border-bottom: 2px dotted #ff1a33; }',
     'ons-input { margin-bottom: 0.5em; }',
-    '.isEdit { border-bottom: 2px dotted #ff1a33; }',
     '.rel { width: 100%; position: relative; }',
-    '.left-icon { display: inline-block; vertical-align: top; margin-right: 0.4em; }',
+    '.left-icon { display: inline-block; vertical-align: top; width: 1em; margin-right: 1em; }',
+    '.left-icon-edit { margin-right: 0.6em; }',
+    '.left-icon-viechle { display: inline-block; vertical-align: top; width: 5.4em; margin-right: 1em; }',
+    '.left-icon-viechle input { display: none; }',
+    '.left-icon-viechle i { font-size: 1.4em; color: #ccc; width: 1.4em; margin: 0 0.5em 0.5em 0; text-align: center; }',
+    '.left-icon-viechle i.selected { color: red; }',
     '.right-icon, .fromToTime, .description { margin-left: 0.5em; }',
     '.right-icon { position: absolute; top: 0; right: 0; line-height: 1.2em; }',
     '.fromToTime { display: inline-block; margin-right: 0.4em; }',
+    '.viechle-type { display: inline-block; font-size: 1.4em; width: 1.4em; margin: 0 0.7em 0 2em; text-align: center; }',
     '.description { display: inline-block; vertical-align: top; }',
-    '.descriptionEdit { display: inline-block; vertical-align: top; width: 60%; }',
+    '.description.interval { margin-top: 2px; }',
+    '.description.with-to-time { margin-top: 0.65em; }',
+    '.description-edit { display: inline-block; vertical-align: top; width: 60%; }',
     '.memo { font-size: 0.8em; width: 100%; }',
     'textarea.memo { height: 3.4em; }',
     '.pre { white-space: pre-wrap; }',
-    '.moving { border-left: 2px solid #ccc; }',
   ]
 })
 export class ScheduleRowComponent implements DoCheck {
@@ -72,6 +127,8 @@ export class ScheduleRowComponent implements DoCheck {
   private _row: ScheduleRow;
   private _isEdit: boolean;
   private _prevFromTime: string;
+  ViechleType = ViechleType;
+  ViechleTypeUtil = ViechleTypeUtil;
 
   constructor(private parent: PlanDetailComponent) {
   }
@@ -133,8 +190,12 @@ export class ScheduleRowComponent implements DoCheck {
     }
     this._prevFromTime = this.placeRow.fromTime;
   }
-
-  confirm() {
+  changeViechle(v: ViechleType) {
+    if (this.movingRow) {
+      this.movingRow.viechleType = v;
+    }
+  }
+  confirmDelete() {
     ons.notification.confirm({
       message: 'この項目を削除してよろしいですか？',
       cancelable: true,

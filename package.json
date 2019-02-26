@@ -9,7 +9,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "monaca:preview": "npm run dev",
-    "dev": "browser-sync start -s www/ --watch --port 8080 --ui-port 8081"
+    "dev": "browser-sync start -s www/ --watch --port 8080 --ui-port 8081",
+    "postinstall": "echo '/***/' > node_modules/onsenui/css/font_awesome/css/font-awesome.min.css & echo '/***/' > node_modules/onsenui/css/font_awesome/css/v4-shims.min.css"
   },
   "private": true,
   "dependencies": {
@@ -21,8 +22,8 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
+    "@fortawesome/fontawesome-free": "^5.7.2",
     "core-js": "^2.5.4",
-    "fontawesome": "^5.6.3",
     "ngx-onsenui": "^7.0.0",
     "onsenui": "^2.10.6",
     "rxjs": "~6.3.3",
