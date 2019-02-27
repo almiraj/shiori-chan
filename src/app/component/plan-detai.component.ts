@@ -5,6 +5,8 @@ import { PlanComponent } from './plan.component';
 import { Plan } from '../entity/plan';
 import { Schedule } from '../entity/schedule';
 import { FormGroup, FormControl } from '@angular/forms';
+import { ScheduleRowPlace } from '../entity/schedule-row-place';
+import { ScheduleRowMoving } from '../entity/schedule-row-moving';
 
 @Component({
   selector: 'ons-page[page]',
@@ -61,9 +63,15 @@ import { FormGroup, FormControl } from '@angular/forms';
                 <div class="content">
                   <ons-list>
                     <div *ngFor="let row of schedule.rows; let i = index">
+                      <div *ngIf="sche.isEdit" class="add-schedule" (click)="addSchedule(i)">
+                        <i class="far fa-arrow-alt-circle-down"></i> 追加
+                      </div>
                       <app-schedule-row [schedule]="schedule" [row]="row" [isEdit]="sche.isEdit"></app-schedule-row>
                     </div>
-                  </ons-list>
+                    <div *ngIf="sche.isEdit" class="add-schedule" (click)="addSchedule(null)">
+                      <i class="far fa-arrow-alt-circle-down"></i> 追加
+                    </div>
+                    </ons-list>
                 </div>
               </ons-card>
             </ons-carousel-item>
@@ -83,6 +91,8 @@ import { FormGroup, FormControl } from '@angular/forms';
     'ons-carousel { margin-bottom: 1em; }',
     '#carousel-button { text-align: center; }',
     '#carousel-button .radio-button { display: inline-block; margin-right: 0.1em; margin-left: 0.1em; }',
+    '.add-schedule { width: 5em; margin: 2px 0 2px auto; border-radius: 12px; }',
+    '.add-schedule { background-color: #f99; color: #fff; text-align: center; }',
   ]
 })
 export class PlanDetailComponent {
@@ -99,5 +109,30 @@ export class PlanDetailComponent {
   }
   selectSchedule() {
     this.scheduleIdx = this.carousel.nativeElement.getActiveIndex();
+  }
+  addSchedule(i: number) {
+    ons.openActionSheet({
+      title: 'スケジュールを追加する',
+      cancelable: true,
+      buttons: [ '場所／行動', '移動手段', { label: 'キャンセル', icon: 'md-close' } ],
+      callback: (type: number) => {
+        if (type === 0) {
+          // 場所／行動
+          if (i !== null) {
+            this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowPlace());
+          } else {
+            this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowPlace());
+          }
+        } else if (type === 1) {
+          // 移動手段
+          if (i !== null) {
+            this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowMoving());
+          } else {
+            this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowMoving());
+          }
+          return;
+        }
+      }
+    });
   }
 }

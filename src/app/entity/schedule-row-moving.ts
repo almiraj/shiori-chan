@@ -5,8 +5,8 @@ export class ScheduleRowMoving implements ScheduleRow {
   isMoving = true;
   memo: string;
   url: string;
-  interval: string;
-  viechleType: ViechleType;
+  interval = '00:00';
+  viechleType = ViechleType.WALK;
 
   getIntervalLabel() {
     return this.interval.replace(/(\d+):(\d+)/, (a0: string, a1: string, a2: string) => {

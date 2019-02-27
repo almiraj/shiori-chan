@@ -84,8 +84,12 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
         <div *ngIf="!isEdit">
           <div class="right-icon" *ngIf="row.url">
             <a [href]="row.url" target="_blank">
-              <i *ngIf="placeRow" class="far fa-compass"></i>
-              <i *ngIf="movingRow" class="fas fa-external-link-alt"></i>
+              <i [ngClass]="{
+                'fas': true,
+                'fa-street-view': placeRow,
+                'fa-external-link-alt': movingRow,
+                'with-to-time': placeRow && placeRow.fromTime !== placeRow.toTime
+              }"></i>
             </a>
           </div>
         </div>
@@ -96,10 +100,9 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
         </div>
       </div>
     </ons-list-item>
-  `,
+    `,
   styles: [
     'ons-list-item { padding: 0; }',
-    'ons-list-item.edit-item { border-bottom: 2px dotted #ff1a33; }',
     'ons-input { margin-bottom: 0.5em; }',
     '.rel { width: 100%; position: relative; }',
     '.left-icon { display: inline-block; vertical-align: top; width: 1em; margin-right: 1em; }',
@@ -111,10 +114,10 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
     '.right-icon, .fromToTime, .description { margin-left: 0.5em; }',
     '.right-icon { position: absolute; top: 0; right: 0; line-height: 1.2em; }',
     '.fromToTime { display: inline-block; margin-right: 0.4em; }',
+    '.with-to-time { margin-top: 0.65em; }',
     '.viechle-type { display: inline-block; font-size: 1.4em; width: 1.4em; margin: 0 0.7em 0 2em; text-align: center; }',
     '.description { display: inline-block; vertical-align: top; }',
     '.description.interval { margin-top: 2px; }',
-    '.description.with-to-time { margin-top: 0.65em; }',
     '.description-edit { display: inline-block; vertical-align: top; width: 60%; }',
     '.memo { font-size: 0.8em; width: 100%; }',
     'textarea.memo { height: 3.4em; }',

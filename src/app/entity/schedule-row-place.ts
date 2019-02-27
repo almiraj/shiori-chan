@@ -4,7 +4,7 @@ export class ScheduleRowPlace implements ScheduleRow {
   isMoving = false;
   memo: string;
   url: string;
-  description: string;
+  description = '';
   fromTime: string;
   toTime: string;
   lat: number;
