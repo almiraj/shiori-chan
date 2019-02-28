@@ -1,6 +1,9 @@
 import { ScheduleRow } from './schedule-row';
 
 export class Schedule {
-  name: string;
-  rows: ScheduleRow[];
+  rows = new Array<ScheduleRow>();
+
+  constructor(
+    public name: string
+  ) {}
 }

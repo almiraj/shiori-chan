@@ -17,7 +17,6 @@ export class PlanService {
     p.id = 'asdfasdf';
     p.name = name;
     p.theme = PlanTheme.SEA;
-    p.schedules = [];
     return Promise.resolve(p);
   }
 
@@ -40,10 +39,7 @@ export class PlanService {
     p.fromYmd = '2019/02/19';
     p.baggage = 'くつした\nシャンプー\n折り畳み傘';
 
-    p.schedules = [new Schedule(), new Schedule()];
-
-    p.schedules[0].name = '1日目';
-    p.schedules[0].rows = [];
+    p.schedules.push(new Schedule('1日目'));
     p.schedules[0].rows.push((() => {
       const row = new ScheduleRowPlace();
       row.fromTime = '07:00';
@@ -93,8 +89,7 @@ export class PlanService {
       return row;
     })());
 
-    p.schedules[1].name = '1日目 (雨用プラン)';
-    p.schedules[1].rows = [];
+    p.schedules.push(new Schedule('1日目 (雨用プラン)'));
     p.schedules[1].rows.push((() => {
       const row = new ScheduleRowPlace();
       row.fromTime = '09:30';

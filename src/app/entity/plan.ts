@@ -8,5 +8,5 @@ export class Plan {
   fromYmd: string;
   toYmd: string;
   baggage: string;
-  schedules: Schedule[];
+  schedules = new Array<Schedule>();
 }

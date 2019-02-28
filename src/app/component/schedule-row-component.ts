@@ -86,7 +86,7 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
             <a [href]="row.url" target="_blank">
               <i [ngClass]="{
                 'fas': true,
-                'fa-street-view': placeRow,
+                'fa-map-marked-alt': placeRow,
                 'fa-external-link-alt': movingRow,
                 'with-to-time': placeRow && placeRow.fromTime !== placeRow.toTime
               }"></i>
@@ -102,6 +102,7 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
     </ons-list-item>
     `,
   styles: [
+    'i { font-size: 1.2em; }',
     'ons-list-item { padding: 0; }',
     'ons-input { margin-bottom: 0.5em; }',
     '.rel { width: 100%; position: relative; }',
@@ -119,7 +120,7 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
     '.description { display: inline-block; vertical-align: top; }',
     '.description.interval { margin-top: 2px; }',
     '.description-edit { display: inline-block; vertical-align: top; width: 60%; }',
-    '.memo { font-size: 0.8em; width: 100%; }',
+    '.memo { font-size: 0.85em; color: #666; width: 100%; margin-top: 0.5em; }',
     'textarea.memo { height: 3.4em; }',
     '.pre { white-space: pre-wrap; }',
   ]
