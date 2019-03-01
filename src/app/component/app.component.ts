@@ -1,5 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
-import { OnsSplitterContent, OnsSplitterSide } from 'ngx-onsenui';
+import { Component } from '@angular/core';
 
 import { PlanComponent } from './plan.component';
 

@@ -42,13 +42,13 @@ export class PlanService {
     p.schedules.push(new Schedule('1日目'));
     p.schedules[0].rows.push((() => {
       const row = new ScheduleRowPlace();
-      row.fromTime = '07:00';
+      row.fromTime = row.toTime = '07:00';
       row.description = '起床';
       return row;
     })());
     p.schedules[0].rows.push((() => {
       const row = new ScheduleRowPlace();
-      row.fromTime = '08:30';
+      row.fromTime = row.toTime = '08:30';
       row.description = '家を出る';
       row.memo = '持ち物を忘れないように\n最悪でも11:15には出ること';
       return row;
@@ -61,7 +61,7 @@ export class PlanService {
     })());
     p.schedules[0].rows.push((() => {
       const row = new ScheduleRowPlace();
-      row.fromTime = '09:10';
+      row.fromTime = row.toTime = '09:10';
       row.toTime = '09:13';
       row.description = '新大阪駅';
       row.url = 'https://www.google.com/maps/place/%E6%96%B0%E5%A4%A7%E9%98%AA%E9%A7%85/@34.7334658,135.5002547,15z/'
@@ -81,7 +81,7 @@ export class PlanService {
     })());
     p.schedules[0].rows.push((() => {
       const row = new ScheduleRowPlace();
-      row.fromTime = '09:46';
+      row.fromTime = row.toTime = '09:46';
       row.description = 'ユニバーサルシティ駅';
       row.url = 'https://www.google.com/maps/place/%E3%83%A6%E3%83%8B%E3%83%90%E3%83%BC%E3%82%B5%E3%83%'
         + 'AB%E3%82%B7%E3%83%86%E3%82%A3%E9%A7%85/@34.6678432,135.4363651,17z/data=!3m1!4b1!4m5!3m4!'
@@ -92,13 +92,13 @@ export class PlanService {
     p.schedules.push(new Schedule('1日目 (雨用プラン)'));
     p.schedules[1].rows.push((() => {
       const row = new ScheduleRowPlace();
-      row.fromTime = '09:30';
+      row.fromTime = row.toTime = '09:30';
       row.description = '起床';
       return row;
     })());
     p.schedules[1].rows.push((() => {
       const row = new ScheduleRowPlace();
-      row.fromTime = '11:00';
+      row.fromTime = row.toTime = '11:00';
       row.description = '家を出る';
       return row;
     })());
@@ -110,7 +110,7 @@ export class PlanService {
     })());
     p.schedules[1].rows.push((() => {
       const row = new ScheduleRowPlace();
-      row.fromTime = '11:20';
+      row.fromTime = row.toTime = '11:20';
       row.description = '小川町駅';
       return row;
     })());
@@ -125,7 +125,7 @@ export class PlanService {
     })());
     p.schedules[1].rows.push((() => {
       const row = new ScheduleRowPlace();
-      row.fromTime = '11:30';
+      row.fromTime = row.toTime = '11:30';
       row.description = '新宿駅';
       return row;
     })());

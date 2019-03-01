@@ -4,7 +4,6 @@ import * as ons from 'onsenui';
 import { PlanDetailComponent } from './plan-detai.component';
 import { PlanService } from '../service/plan.service';
 import { Plan } from '../entity/plan';
-import { PlanTheme } from '../entity/plan-theme';
 
 @Component({
   selector: 'ons-page[page]',
@@ -72,7 +71,10 @@ import { PlanTheme } from '../entity/plan-theme';
 export class PlanComponent {
   plans: Plan[];
 
-  constructor(private navi: OnsNavigator, private planService: PlanService) {
+  constructor(
+    private navi: OnsNavigator,
+    private planService: PlanService
+  ) {
     planService.getPlans().then(plans => this.plans = plans);
   }
 

@@ -1,13 +1,11 @@
-import { Component, OnsNavigator, Params, ViewChild, ElementRef } from 'ngx-onsenui';
+import { Component, Params, ViewChild, ElementRef } from 'ngx-onsenui';
 import * as ons from 'onsenui';
+import { timer } from 'rxjs';
 
-import { PlanComponent } from './plan.component';
 import { Plan } from '../entity/plan';
 import { Schedule } from '../entity/schedule';
-import { FormGroup, FormControl } from '@angular/forms';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
-import { timer } from 'rxjs';
 
 @Component({
   selector: 'ons-page[page]',
@@ -101,19 +99,21 @@ import { timer } from 'rxjs';
   ]
 })
 export class PlanDetailComponent {
-  @ViewChild('carousel') carousel: ElementRef;
+  @ViewChild('carousel') carouselRef: ElementRef;
   plan: Plan;
   scheduleIdx = 0;
 
-  constructor(navigator: OnsNavigator, params: Params) {
+  constructor(
+    params: Params
+  ) {
     this.plan = params.data;
   }
 
   swipeSchedule(i: number) {
-    this.carousel.nativeElement.setActiveIndex(i);
+    this.carouselRef.nativeElement.setActiveIndex(i);
   }
   selectSchedule() {
-    this.scheduleIdx = this.carousel.nativeElement.getActiveIndex();
+    this.scheduleIdx = this.carouselRef.nativeElement.getActiveIndex();
   }
   addSchedule() {
     ons.notification.prompt({

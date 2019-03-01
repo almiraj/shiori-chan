@@ -1,4 +1,4 @@
-import { Component, Input, OnsNavigator, ElementRef, ViewChildren, DoCheck } from 'ngx-onsenui';
+import { Component, Input, ElementRef, ViewChildren } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
 import { ScheduleRow } from '../entity/schedule-row';
@@ -44,7 +44,7 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
           <span *ngIf="placeRow.fromTime != placeRow.toTime">{{placeRow.toTime}}</span>
         </div>
         <div *ngIf="placeRow && isEdit" class="fromToTime">
-          <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="setToTime()"></ons-input>
+          <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="syncToTime()"></ons-input>
           <br>
           <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
         </div>
@@ -126,7 +126,7 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
     '.pre { white-space: pre-wrap; }',
   ]
 })
-export class ScheduleRowComponent implements DoCheck {
+export class ScheduleRowComponent {
   @ViewChildren('inp') inp: ElementRef;
   private _schedule: Schedule;
   private _row: ScheduleRow;
@@ -135,27 +135,14 @@ export class ScheduleRowComponent implements DoCheck {
   ViechleType = ViechleType;
   ViechleTypeUtil = ViechleTypeUtil;
 
-  constructor(private parent: PlanDetailComponent) {
-  }
+  @Input()
+  set schedule(schedule: Schedule) { this._schedule = schedule; }
+  get schedule(): Schedule { return this._schedule; }
 
   @Input()
-  set schedule(schedule: Schedule) {
-    this._schedule = schedule;
-  }
-  get schedule(): Schedule {
-    return this._schedule;
-  }
+  set row(row: ScheduleRow) { this._row = row; }
+  get row(): ScheduleRow { return this._row; }
 
-  @Input()
-  set row(row: ScheduleRow) {
-    this._row = row;
-    if (!this._row.isMoving) {
-      this.setToTime();
-    }
-  }
-  get row(): ScheduleRow {
-    return this._row;
-  }
   get placeRow(): ScheduleRowPlace {
     if (!this._row.isMoving) {
       return <ScheduleRowPlace>this._row;
@@ -170,14 +157,10 @@ export class ScheduleRowComponent implements DoCheck {
   }
 
   @Input()
-  set isEdit(isEdit: boolean) {
-    this._isEdit = isEdit;
-  }
-  get isEdit(): boolean {
-    return this._isEdit;
-  }
+  set isEdit(isEdit: boolean) { this._isEdit = isEdit; }
+  get isEdit(): boolean { return this._isEdit; }
 
-  setToTime() {
+  syncToTime() {
     if (!this.placeRow.toTime || this.placeRow.toTime === this._prevFromTime) {
       this.placeRow.toTime = this.placeRow.fromTime;
     }
