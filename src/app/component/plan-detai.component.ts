@@ -7,6 +7,7 @@ import { Schedule } from '../entity/schedule';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'ons-page[page]',
@@ -46,6 +47,7 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
             <div id="carousel-button">
               <ons-radio name="scheduleIdx" modifier="material" *ngFor="let schedule of plan.schedules; let i = index"
                 (change)="swipeSchedule(i)" [attr.value]="i" [checked]="i == scheduleIdx"></ons-radio>
+              <i class="fas fa-plus" (click)="addSchedule()"></i>
             </div>
           </ons-carousel-cover>
           <ons-carousel #carousel fullscreen swipeable auto-scroll overscrollable (postchange)="selectSchedule()">
@@ -89,7 +91,9 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
     '.pre { white-space: pre-wrap; }',
     'ons-carousel { margin-bottom: 1em; }',
     '#carousel-button { text-align: center; }',
-    '#carousel-button ons-radio { display: inline-block; margin: 0 0.4em; }',
+    '#carousel-button > ons-radio { display: inline-block; margin: 0 0.4em; }',
+    '#carousel-button > i { display: inline-block; margin: 0 0.4em; padding: 2.2px; font-size: 0.8em; }',
+    '#carousel-button > i { border: 2px solid #717171; border-radius: 50%; }',
     '.add-schedule { width: 5em; line-height: 1.6em; margin: 1em 0 2px auto; border-radius: 12px; }',
     '.add-schedule { background-color: #f99; color: #fff; text-align: center; }',
     '.add-schedule > i { margin-top: 0.26em; }',
@@ -111,11 +115,26 @@ export class PlanDetailComponent {
   selectSchedule() {
     this.scheduleIdx = this.carousel.nativeElement.getActiveIndex();
   }
+  addSchedule() {
+    ons.notification.prompt({
+      cancelable: true,
+      title: '',
+      message: 'スケジュール名を入力してください',
+      callback: (name: string) => {
+        if (name) {
+          const sche = new Schedule(name);
+          sche.rows.push(new ScheduleRowPlace());
+          const idx = this.plan.schedules.push(sche) - 1;
+          timer(0).subscribe(() => this.swipeSchedule(idx)); // 追加したスケジュールを表示する
+        }
+      }
+    });
+  }
   addScheduleRow(i: number) {
     ons.openActionSheet({
       title: '項目を追加する',
       cancelable: true,
-      buttons: [ '移動手段', '場所や行動', { label: 'キャンセル', icon: 'md-close' } ],
+      buttons: [ '移動手段', '場所／行動', { label: 'キャンセル', icon: 'md-close' } ],
       callback: (type: number) => {
         if (type === 0) {
           // 移動手段
@@ -127,7 +146,7 @@ export class PlanDetailComponent {
           return;
         }
         if (type === 1) {
-          // 場所や行動
+          // 場所／行動
           if (i !== null) {
             this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowPlace());
           } else {
