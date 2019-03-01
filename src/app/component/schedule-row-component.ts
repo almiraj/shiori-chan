@@ -105,6 +105,7 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
     'i { font-size: 1.2em; }',
     'ons-list-item { padding: 0; }',
     'ons-input { margin-bottom: 0.5em; }',
+    // 'ons-input .text-input { styles.cssで定義 }',
     '.rel { width: 100%; position: relative; }',
     '.left-icon { display: inline-block; vertical-align: top; width: 1em; margin-right: 1em; }',
     '.left-icon-edit { margin-right: 0.6em; }',
@@ -176,18 +177,6 @@ export class ScheduleRowComponent implements DoCheck {
     return this._isEdit;
   }
 
-  ngDoCheck() {
-    // ons-inputが動的に生成してくるinputのstyleを強引に書き換える
-    if (this.inp) {
-      this.inp['_results'].forEach((elem: ElementRef) => {
-        const inputElement = elem.nativeElement.childNodes[1];
-        if (inputElement && inputElement.nodeName === 'INPUT') {
-          inputElement.style.fontSize = 'inherit';
-          inputElement.style.fontFamily = '-apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif';
-        }
-      });
-    }
-  }
   setToTime() {
     if (!this.placeRow.toTime || this.placeRow.toTime === this._prevFromTime) {
       this.placeRow.toTime = this.placeRow.fromTime;

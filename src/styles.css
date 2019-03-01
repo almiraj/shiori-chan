@@ -1,1 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+ons-input .text-input {
+  font-size: inherit;
+  font-family: -apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif;
+}
