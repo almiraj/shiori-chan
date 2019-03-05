@@ -44,9 +44,9 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
           <span *ngIf="placeRow.fromTime != placeRow.toTime">{{placeRow.toTime}}</span>
         </div>
         <div *ngIf="placeRow && isEdit" class="fromToTime">
-          <ons-input type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="syncToTime()"></ons-input>
+          <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="syncToTime()"></ons-input>
           <br>
-          <ons-input type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
+          <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
         </div>
         <div *ngIf="movingRow && !isEdit" class="viechle-type">
           <i [ngClass]="{
@@ -74,11 +74,11 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
           <div class="memo pre">{{row.memo}}</div>
         </div>
         <div *ngIf="placeRow && isEdit" class="description-edit">
-          <ons-input type="text" modifier="material underbar" [(ngModel)]="placeRow.description"></ons-input>
+          <ons-input #inp type="text" modifier="material underbar" [(ngModel)]="placeRow.description"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
         <div *ngIf="movingRow && isEdit" class="description-edit">
-          所要時間：<ons-input type="time" modifier="material underbar" [(ngModel)]="movingRow.interval"></ons-input>
+          所要時間：<ons-input #inp type="time" modifier="material underbar" [(ngModel)]="movingRow.interval"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
         <div *ngIf="!isEdit">
@@ -134,13 +134,14 @@ export class ScheduleRowComponent {
   ViechleType = ViechleType;
   ViechleTypeUtil = ViechleTypeUtil;
 
-  @Input()
-  set schedule(schedule: Schedule) { this._schedule = schedule; }
+  @Input() set schedule(schedule: Schedule) { this._schedule = schedule; }
   get schedule(): Schedule { return this._schedule; }
 
-  @Input()
-  set row(row: ScheduleRow) { this._row = row; }
+  @Input() set row(row: ScheduleRow) { this._row = row; }
   get row(): ScheduleRow { return this._row; }
+
+  @Input() set isEdit(isEdit: boolean) { this._isEdit = isEdit; }
+  get isEdit(): boolean { return this._isEdit; }
 
   get placeRow(): ScheduleRowPlace {
     if (!this._row.isMoving) {
@@ -154,11 +155,6 @@ export class ScheduleRowComponent {
     }
     return null;
   }
-
-  @Input()
-  set isEdit(isEdit: boolean) { this._isEdit = isEdit; }
-  get isEdit(): boolean { return this._isEdit; }
-
   syncToTime() {
     if (!this.placeRow.toTime || this.placeRow.toTime === this._prevFromTime) {
       this.placeRow.toTime = this.placeRow.fromTime;
