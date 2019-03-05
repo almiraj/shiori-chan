@@ -4,11 +4,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { OnsenModule } from 'ngx-onsenui';
 import { environment } from '../environments/environment';
 
-import { PlanImgPipe } from './pipe/plan-img.pipe';
+import { ThemeImgPipe } from './pipe/theme-img.pipe';
 import { AppComponent } from './component/app.component';
 import { PlanComponent } from './component/plan.component';
 import { PlanDetailComponent } from './component/plan-detai.component';
 import { ScheduleRowComponent } from './component/schedule-row-component';
+import { EnumUtil } from './service/enum-util.service';
 import { PlanService } from './service/plan.service';
 
 if (environment.production) {
@@ -23,13 +24,14 @@ if (environment.production) {
     ReactiveFormsModule,
   ],
   declarations: [
-    PlanImgPipe,
+    ThemeImgPipe,
     AppComponent,
     PlanComponent,
     PlanDetailComponent,
     ScheduleRowComponent,
   ],
   providers: [
+    EnumUtil,
     PlanService,
   ],
   entryComponents: [
