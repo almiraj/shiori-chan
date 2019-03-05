@@ -1,9 +1,11 @@
 export enum PlanTheme {
-  SEA,
-  ROAD,
-  SHOP,
-  HOUSE,
-  SPORT,
-  JAPAN,
-  EUROPE
+  CAFE = 'CAFE',
+  SEA = 'SEA',
+  MOUNTAIN = 'MOUNTAIN',
+  ROAD = 'ROAD',
+  RUNNING = 'RUNNING',
+  GOLF = 'GOLF',
+  KYOTO = 'KYOTO',
+  OSAKA = 'OSAKA',
+  EUROPE = 'EUROPE',
 }

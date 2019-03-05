@@ -22,7 +22,7 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
       </ons-toolbar>
       <div class="content">
         <ons-card>
-          <img src="https://monaca.io/img/logos/download_image_onsenui_01.png" alt="Onsen UI" style="width: 100%">
+          <img [src]="plan.theme | planImg">
           <div class="title">{{plan.name}}</div>
         </ons-card>
         <ons-card #buggage>
@@ -80,6 +80,7 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
   `,
   styles: [
     'i { font-size: 1.2em; }',
+    'img { width: 100%; }',
     'ons-card { position: relative; padding-bottom: 20px; }',
     'ons-card > .pencil { position: absolute; top: 6px; right: 6px; font-size: 1.2em; color: #0076ff; }',
     'ons-card > .envelope { color: #ff1a33; }',

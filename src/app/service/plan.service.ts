@@ -12,11 +12,11 @@ export class PlanService {
   constructor(
   ) {}
 
-  createPlan(name: string): Promise<Plan> {
+  createPlan(name: string, theme: PlanTheme): Promise<Plan> {
     const p = new Plan();
     p.id = 'asdfasdf';
     p.name = name;
-    p.theme = PlanTheme.SEA;
+    p.theme = theme;
     return Promise.resolve(p);
   }
 
@@ -34,8 +34,8 @@ export class PlanService {
 
   private getSamplePlan(): Plan {
     const p = new Plan();
-    p.name = 'プラン１';
-    p.theme = PlanTheme.SEA;
+    p.name = '一泊二日の大阪旅行 in 2019/03/03';
+    p.theme = PlanTheme.OSAKA;
     p.fromYmd = '2019/02/19';
     p.baggage = 'くつした\nシャンプー\n折り畳み傘';
 

@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { OnsenModule } from 'ngx-onsenui';
 import { environment } from '../environments/environment';
 
+import { PlanImgPipe } from './pipe/plan-img.pipe';
 import { AppComponent } from './component/app.component';
 import { PlanComponent } from './component/plan.component';
 import { PlanDetailComponent } from './component/plan-detai.component';
@@ -22,6 +23,7 @@ if (environment.production) {
     ReactiveFormsModule,
   ],
   declarations: [
+    PlanImgPipe,
     AppComponent,
     PlanComponent,
     PlanDetailComponent,
