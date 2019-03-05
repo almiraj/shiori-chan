@@ -14,7 +14,7 @@ import { PlanTheme } from '../entity/plan-theme';
         <div class="left">
           <ons-back-button>Back</ons-back-button>
         </div>
-        <div class="center">Navigation</div>
+        <div class="center">Shiori chan</div>
         <div class="right">
           <ons-toolbar-button (click)="createPlan()">＋</ons-toolbar-button>
         </div>
@@ -23,7 +23,7 @@ import { PlanTheme } from '../entity/plan-theme';
         <div class="plan-card list-item--chevron" *ngFor="let plan of plans" (click)="toDetail(plan)">
           <ons-card>
             <ons-ripple></ons-ripple>
-            <img [src]="plan.theme | planImg">
+            <img [src]="plan.theme | themeImg">
             <div class="title">{{plan.name}}</div>
           </ons-card>
         </div>

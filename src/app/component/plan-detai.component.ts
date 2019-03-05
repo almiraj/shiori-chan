@@ -6,6 +6,8 @@ import { Plan } from '../entity/plan';
 import { Schedule } from '../entity/schedule';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
+import { PlanTheme } from '../entity/plan-theme';
+import { EnumUtil } from '../service/enum-util.service';
 
 @Component({
   selector: 'ons-page[page]',
@@ -15,15 +17,36 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
         <div class="left">
           <ons-back-button>Back</ons-back-button>
         </div>
-        <div class="center">Navigation</div>
+        <div class="center">Plan</div>
         <div class="right">
-          <ons-toolbar-button>share</ons-toolbar-button>
+          <ons-toolbar-button></ons-toolbar-button>
         </div>
       </ons-toolbar>
       <div class="content">
-        <ons-card>
-          <img [src]="plan.theme | planImg">
-          <div class="title">{{plan.name}}</div>
+        <ons-card #head>
+          <div *ngIf="!head.isEdit" class="pencil" (click)="(head.isEdit = !head.isEdit) && swipeTheme()">
+            <i class="fas fa-pencil-alt"></i>
+          </div>
+          <div *ngIf="head.isEdit" class="pencil envelope" (click)="head.isEdit = !head.isEdit">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div *ngIf="!head.isEdit">
+            <img [src]="plan.theme | themeImg">
+            <div class="title">{{plan.name}}</div>
+          </div>
+          <div *ngIf="head.isEdit">
+            <div id="theme-edit-left">
+              <ons-carousel #themes fullscreen swipeable auto-scroll overscrollable (postchange)="selectTheme()">
+                <ons-carousel-item *ngFor="let theme of planThemes; let i = index">
+                  <img [src]="theme | themeImg">
+                </ons-carousel-item>
+              </ons-carousel>
+            </div>
+            <div id="theme-edit-right">
+              <ons-input type="file"></ons-input>
+            </div>
+            <ons-input type="text" id="planNameInput" modifier="material underbar" [(ngModel)]="plan.name"></ons-input>
+          </div>
         </ons-card>
         <ons-card #buggage>
           <div *ngIf="!buggage.isEdit" class="pencil" (click)="buggage.isEdit = !buggage.isEdit">
@@ -42,31 +65,31 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
         </ons-card>
         <div class="content">
           <ons-carousel-cover>
-            <div id="carousel-button">
+            <div id="schedules-radio-area">
               <ons-radio name="scheduleIdx" modifier="material" *ngFor="let schedule of plan.schedules; let i = index"
                 (change)="swipeSchedule(i)" [attr.value]="i" [checked]="i == scheduleIdx"></ons-radio>
               <i class="fas fa-plus" (click)="addSchedule()"></i>
             </div>
           </ons-carousel-cover>
-          <ons-carousel #carousel fullscreen swipeable auto-scroll overscrollable (postchange)="selectSchedule()">
+          <ons-carousel #schedules fullscreen swipeable auto-scroll overscrollable (postchange)="selectSchedule()">
             <ons-carousel-item *ngFor="let schedule of plan.schedules; let i = index">
               <ons-card>
-                <div *ngIf="!carousel.isEdit" class="pencil" (click)="carousel.isEdit = !carousel.isEdit">
+                <div *ngIf="!schedules.isEdit" class="pencil" (click)="schedules.isEdit = !schedules.isEdit">
                   <i class="fas fa-pencil-alt"></i>
                 </div>
-                <div *ngIf="carousel.isEdit" class="pencil envelope" (click)="carousel.isEdit = !carousel.isEdit">
+                <div *ngIf="schedules.isEdit" class="pencil envelope" (click)="schedules.isEdit = !schedules.isEdit">
                   <i class="fas fa-envelope"></i>
                 </div>
                 <div class="title">{{schedule.name}}</div>
                 <div class="content">
                   <ons-list class="schedule-list">
                     <div *ngFor="let row of schedule.rows; let i = index">
-                      <div *ngIf="carousel.isEdit" class="add-schedule" (click)="addScheduleRow(i)">
+                      <div *ngIf="schedules.isEdit" class="add-schedule" (click)="addScheduleRow(i)">
                         <i class="far fa-arrow-alt-circle-left"></i> 追加
                       </div>
-                      <app-schedule-row [schedule]="schedule" [row]="row" [isEdit]="carousel.isEdit"></app-schedule-row>
+                      <app-schedule-row [schedule]="schedule" [row]="row" [isEdit]="schedules.isEdit"></app-schedule-row>
                     </div>
-                    <div *ngIf="carousel.isEdit" class="add-schedule" (click)="addScheduleRow(null)">
+                    <div *ngIf="schedules.isEdit" class="add-schedule" (click)="addScheduleRow(null)">
                       <i class="far fa-arrow-alt-circle-left"></i> 追加
                     </div>
                   </ons-list>
@@ -82,17 +105,18 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
     'i { font-size: 1.2em; }',
     'img { width: 100%; }',
     'ons-card { position: relative; padding-bottom: 20px; }',
-    'ons-card > .pencil { position: absolute; top: 6px; right: 6px; font-size: 1.2em; color: #0076ff; }',
-    'ons-card > .envelope { color: #ff1a33; }',
+    '.pencil { position: absolute; top: 6px; right: 6px; font-size: 1.2em; color: #0076ff; z-index: 100; }',
+    '.envelope { color: #ff1a33; }',
+    '#planNameInput { width: 100%; }',
     '.toggleArea { position: relative; }',
     '.toggleArea textarea { width: 100%; height: 100%; margin: 0; padding: 0; border-width: 0 4px 0 0; border-color: #ff1a33; }',
     '.toggleArea textarea { font-family: -apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif; }',
     '.pre { white-space: pre-wrap; }',
     'ons-carousel { margin-bottom: 1em; }',
-    '#carousel-button { text-align: center; }',
-    '#carousel-button > ons-radio { display: inline-block; margin: 0 0.4em; }',
-    '#carousel-button > i { display: inline-block; margin: 0 0.4em; padding: 2.2px; font-size: 0.8em; }',
-    '#carousel-button > i { border: 2px solid #717171; border-radius: 50%; }',
+    '#schedules-radio-area { text-align: center; }',
+    '#schedules-radio-area > ons-radio { display: inline-block; margin: 0 0.4em; }',
+    '#schedules-radio-area > i { display: inline-block; margin: 0 0.4em; padding: 2.2px; font-size: 0.8em; }',
+    '#schedules-radio-area > i { border: 2px solid #717171; border-radius: 50%; }',
     '.add-schedule { width: 5em; line-height: 1.6em; margin: 1em 0 2px auto; border-radius: 12px; }',
     '.add-schedule { background-color: #f99; color: #fff; text-align: center; }',
     '.add-schedule > i { margin-top: 0.26em; }',
@@ -100,21 +124,30 @@ import { ScheduleRowMoving } from '../entity/schedule-row-moving';
   ]
 })
 export class PlanDetailComponent {
-  @ViewChild('carousel') carouselRef: ElementRef;
+  @ViewChild('themes') themesRef: ElementRef;
+  @ViewChild('schedules') schedulesRef: ElementRef;
+  planThemes = this.enumUtil.indexes(PlanTheme);
   plan: Plan;
   scheduleIdx = 0;
 
   constructor(
-    params: Params
+    private enumUtil: EnumUtil,
+    params: Params,
   ) {
     this.plan = params.data;
   }
 
+  swipeTheme() {
+    timer(0).subscribe(() => this.themesRef.nativeElement.setActiveIndex(this.plan.theme));
+  }
+  selectTheme() {
+    this.plan.theme = this.themesRef.nativeElement.getActiveIndex();
+  }
   swipeSchedule(i: number) {
-    this.carouselRef.nativeElement.setActiveIndex(i);
+    this.schedulesRef.nativeElement.setActiveIndex(i);
   }
   selectSchedule() {
-    this.scheduleIdx = this.carouselRef.nativeElement.getActiveIndex();
+    this.scheduleIdx = this.schedulesRef.nativeElement.getActiveIndex();
   }
   addSchedule() {
     ons.notification.prompt({

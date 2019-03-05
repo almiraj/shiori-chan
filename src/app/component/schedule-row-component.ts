@@ -44,9 +44,9 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
           <span *ngIf="placeRow.fromTime != placeRow.toTime">{{placeRow.toTime}}</span>
         </div>
         <div *ngIf="placeRow && isEdit" class="fromToTime">
-          <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="syncToTime()"></ons-input>
+          <ons-input type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="syncToTime()"></ons-input>
           <br>
-          <ons-input #inp type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
+          <ons-input type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
         </div>
         <div *ngIf="movingRow && !isEdit" class="viechle-type">
           <i [ngClass]="{
@@ -74,11 +74,11 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
           <div class="memo pre">{{row.memo}}</div>
         </div>
         <div *ngIf="placeRow && isEdit" class="description-edit">
-          <ons-input #inp type="text" modifier="material underbar" [(ngModel)]="placeRow.description"></ons-input>
+          <ons-input type="text" modifier="material underbar" [(ngModel)]="placeRow.description"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
         <div *ngIf="movingRow && isEdit" class="description-edit">
-          所要時間：<ons-input #inp type="time" modifier="material underbar" [(ngModel)]="movingRow.interval"></ons-input>
+          所要時間：<ons-input type="time" modifier="material underbar" [(ngModel)]="movingRow.interval"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
         <div *ngIf="!isEdit">
@@ -127,7 +127,6 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
   ]
 })
 export class ScheduleRowComponent {
-  @ViewChildren('inp') inp: ElementRef;
   private _schedule: Schedule;
   private _row: ScheduleRow;
   private _isEdit: boolean;
