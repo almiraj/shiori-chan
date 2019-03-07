@@ -10,7 +10,9 @@
     "e2e": "ng e2e",
     "monaca:preview": "npm run dev",
     "dev": "browser-sync start -s www/ --watch --port 8080 --ui-port 8081",
-    "postinstall": "echo '/***/' > node_modules/onsenui/css/font_awesome/css/font-awesome.min.css & echo '/***/' > node_modules/onsenui/css/font_awesome/css/v4-shims.min.css"
+    "postinstall": "npm run resgen & npm run killOnsenFa",
+    "resgen": "npx cordova-res-generator -p android,ios",
+    "killOnsenFa": "echo /***/ > node_modules/onsenui/css/font_awesome/css/font-awesome.min.css & echo /***/ > node_modules/onsenui/css/font_awesome/css/v4-shims.min.css"
   },
   "private": true,
   "dependencies": {
@@ -41,6 +43,7 @@
     "browser-sync": "^2.24.5",
     "codelyzer": "~4.5.0",
     "cordova": "^7.1.0",
+    "cordova-res-generator": "^0.4.2",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~3.1.1",
