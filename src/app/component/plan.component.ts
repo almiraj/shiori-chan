@@ -5,6 +5,7 @@ import { PlanDetailComponent } from './plan-detai.component';
 import { PlanService } from '../service/plan.service';
 import { Plan } from '../entity/plan';
 import { PlanTheme } from '../entity/plan-theme';
+import { MapComponent } from './map.component';
 
 @Component({
   selector: 'ons-page[page]',
@@ -50,7 +51,7 @@ export class PlanComponent {
   }
 
   toDetail(plan: Plan) {
-    this.navi.element.pushPage(PlanDetailComponent, {data: plan});
+    this.navi.element.pushPage(PlanDetailComponent, { data: plan });
   }
 
   createPlan() {

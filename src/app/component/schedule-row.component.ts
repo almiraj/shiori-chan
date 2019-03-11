@@ -1,12 +1,12 @@
-import { Component, Input, ElementRef, ViewChildren } from 'ngx-onsenui';
+import { Component, Input, ElementRef, ViewChildren, OnsNavigator } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
 import { ScheduleRow } from '../entity/schedule-row';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
-import { PlanDetailComponent } from './plan-detai.component';
 import { Schedule } from '../entity/schedule';
 import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
+import { MapComponent } from './map.component';
 
 @Component({
   selector: 'app-schedule-row',
@@ -67,16 +67,16 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
         </div>
         <div *ngIf="placeRow && !isEdit" class="description" [ngClass]="{ 'with-to-time': placeRow.fromTime !== placeRow.toTime }">
           {{placeRow.description}}
-          <div class="memo pre">{{row.memo}}</div>
+          <div class="baggage pre">{{row.memo}}</div>
         </div>
         <div *ngIf="movingRow && !isEdit" class="description interval">
           ({{movingRow.getIntervalLabel()}})
-          <div class="memo pre">{{row.memo}}</div>
+          <div class="baggage pre">{{row.memo}}</div>
         </div>
         <div *ngIf="placeRow && isEdit" class="description-edit">
           <ons-input type="text" modifier="material underbar" [(ngModel)]="placeRow.description"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
-        </div>
+          </div>
         <div *ngIf="movingRow && isEdit" class="description-edit">
           所要時間：<ons-input type="time" modifier="material underbar" [(ngModel)]="movingRow.interval"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
@@ -94,8 +94,11 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
           </div>
         </div>
         <div *ngIf="isEdit">
-          <div class="right-icon" (click)="confirmDelete()">
-            <i class="far fa-window-close"></i>
+          <div class="right-icon">
+            <i class="far fa-window-close" (click)="confirmDelete()"></i>
+            <div *ngIf="placeRow" class="right-bottom-icon">
+              <i class="fas fa-map-marked-alt" (click)="toMap(placeRow)"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -114,14 +117,16 @@ import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
     '.left-icon-viechle i { font-size: 1.4em; color: #ccc; width: 1.4em; margin: 0 0.5em 0.5em 0; text-align: center; }',
     '.left-icon-viechle i.selected { color: red; }',
     '.right-icon, .fromToTime, .description { margin-left: 0.5em; }',
-    '.right-icon { position: absolute; top: 0; right: 0; line-height: 1.2em; }',
+    '.right-icon { position: absolute; top: 0; right: 0; height: 100%; line-height: 1.2em; }',
+    '.right-bottom-icon { position: absolute; bottom: 4px; color: #cc6666; }',
     '.fromToTime { display: inline-block; margin-right: 0.4em; }',
     '.with-to-time { margin-top: 0.65em; }',
     '.viechle-type { display: inline-block; font-size: 1.4em; width: 1.4em; margin: 0 0.7em 0 2em; text-align: center; }',
     '.description { display: inline-block; vertical-align: top; }',
     '.description.interval { margin-top: 2px; }',
-    '.description-edit { display: inline-block; vertical-align: top; width: 60%; }',
-    '.memo { font-size: 0.85em; color: #666; width: 100%; margin-top: 0.5em; }',
+    '.description-edit { display: inline-block; vertical-align: top; width: 65%; }',
+    '.baggage { font-size: 0.85em; color: #666; width: 100%; margin-top: 0.5em; }',
+    '.memo { font-size: 0.8em; color: #666; width: 85%; margin-top: 0.5em; }',
     'textarea.memo { height: 3.4em; }',
     '.pre { white-space: pre-wrap; }',
   ]
@@ -159,6 +164,10 @@ export class ScheduleRowComponent {
   set isEdit(isEdit: boolean) { this._isEdit = isEdit; }
   get isEdit(): boolean { return this._isEdit; }
 
+  constructor(
+    private navi: OnsNavigator,
+  ) {}
+
   syncToTime() {
     if (!this.placeRow.toTime || this.placeRow.toTime === this._prevFromTime) {
       this.placeRow.toTime = this.placeRow.fromTime;
@@ -181,5 +190,8 @@ export class ScheduleRowComponent {
         }
       }
     });
+  }
+  toMap(placeRow: ScheduleRowPlace) {
+    this.navi.element.pushPage(MapComponent, { data: placeRow });
   }
 }

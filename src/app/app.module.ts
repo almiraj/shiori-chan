@@ -2,6 +2,7 @@ import { enableProdMode, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { OnsenModule } from 'ngx-onsenui';
+import { AgmCoreModule } from '@agm/core';
 import { environment } from '../environments/environment';
 
 import { ThemeImgPipe } from './pipe/theme-img.pipe';
@@ -11,6 +12,7 @@ import { PlanDetailComponent } from './component/plan-detai.component';
 import { ScheduleRowComponent } from './component/schedule-row.component';
 import { EnumUtil } from './service/enum-util.service';
 import { PlanService } from './service/plan.service';
+import { MapComponent } from './component/map.component';
 
 if (environment.production) {
   enableProdMode();
@@ -22,6 +24,10 @@ if (environment.production) {
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyDp3nJwrIGEGFfmlPPP_iaN-fuDRkMxou8',
+      libraries: [ 'places' ]
+    }),
   ],
   declarations: [
     ThemeImgPipe,
@@ -29,6 +35,7 @@ if (environment.production) {
     PlanComponent,
     PlanDetailComponent,
     ScheduleRowComponent,
+    MapComponent,
   ],
   providers: [
     EnumUtil,
@@ -38,6 +45,7 @@ if (environment.production) {
     PlanComponent,
     PlanDetailComponent,
     ScheduleRowComponent,
+    MapComponent,
   ],
   bootstrap: [
     AppComponent,

@@ -7,6 +7,7 @@ export class ScheduleRowPlace implements ScheduleRow {
   description = '';
   fromTime: string;
   toTime: string;
+  address: string;
   lat: number;
   lng: number;
 }
