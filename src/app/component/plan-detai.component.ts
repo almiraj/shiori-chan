@@ -27,8 +27,8 @@ import { EnumUtil } from '../service/enum-util.service';
           <div *ngIf="!head.isEdit" class="pencil" (click)="(head.isEdit = !head.isEdit) && (themesInitIdx = plan.theme)">
             <i class="fas fa-pencil-alt"></i>
           </div>
-          <div *ngIf="head.isEdit" class="pencil envelope" (click)="head.isEdit = !head.isEdit">
-            <i class="fas fa-envelope"></i>
+          <div *ngIf="head.isEdit" class="pencil check" (click)="head.isEdit = !head.isEdit">
+            <i class="fas fa-check-square"></i>
           </div>
           <div *ngIf="!head.isEdit">
             <img [src]="plan.theme | themeImg">
@@ -53,8 +53,8 @@ import { EnumUtil } from '../service/enum-util.service';
           <div *ngIf="!buggage.isEdit" class="pencil" (click)="buggage.isEdit = !buggage.isEdit">
             <i class="fas fa-pencil-alt"></i>
           </div>
-          <div *ngIf="buggage.isEdit" class="pencil envelope" (click)="buggage.isEdit = !buggage.isEdit">
-            <i class="fas fa-envelope"></i>
+          <div *ngIf="buggage.isEdit" class="pencil check" (click)="buggage.isEdit = !buggage.isEdit">
+            <i class="fas fa-check-square"></i>
           </div>
           <div class="title">持ち物・メモ書き</div>
           <div class="content toggleArea">
@@ -78,8 +78,8 @@ import { EnumUtil } from '../service/enum-util.service';
                 <div *ngIf="!schedules.isEdit" class="pencil" (click)="schedules.isEdit = !schedules.isEdit">
                   <i class="fas fa-pencil-alt"></i>
                 </div>
-                <div *ngIf="schedules.isEdit" class="pencil envelope" (click)="schedules.isEdit = !schedules.isEdit">
-                  <i class="fas fa-envelope"></i>
+                <div *ngIf="schedules.isEdit" class="pencil check" (click)="schedules.isEdit = !schedules.isEdit">
+                  <i class="fas fa-check-square"></i>
                 </div>
                 <div class="title">{{schedule.name}}</div>
                 <div class="content">
@@ -107,7 +107,7 @@ import { EnumUtil } from '../service/enum-util.service';
     'img { width: 100%; }',
     'ons-card { position: relative; padding-bottom: 20px; }',
     '.pencil { position: absolute; top: 6px; right: 6px; font-size: 1.2em; color: #0076ff; z-index: 100; }',
-    '.envelope { color: #ff1a33; }',
+    '.check { color: #ff1a33; }',
     '#planNameInput { width: 100%; }',
     '.toggleArea { position: relative; }',
     '.toggleArea textarea { width: 100%; height: 100%; margin: 0; padding: 0; border-width: 0 4px 0 0; border-color: #ff1a33; }',
