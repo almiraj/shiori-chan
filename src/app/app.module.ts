@@ -8,7 +8,7 @@ import { ThemeImgPipe } from './pipe/theme-img.pipe';
 import { AppComponent } from './component/app.component';
 import { PlanComponent } from './component/plan.component';
 import { PlanDetailComponent } from './component/plan-detai.component';
-import { ScheduleRowComponent } from './component/schedule-row-component';
+import { ScheduleRowComponent } from './component/schedule-row.component';
 import { EnumUtil } from './service/enum-util.service';
 import { PlanService } from './service/plan.service';
 
