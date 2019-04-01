@@ -13,6 +13,7 @@ import { ScheduleRowComponent } from './component/schedule-row.component';
 import { EnumUtil } from './service/enum-util.service';
 import { PlanService } from './service/plan.service';
 import { MapComponent } from './component/map.component';
+import { MapDirectionComponent } from './component/map-direction.component';
 
 if (environment.production) {
   enableProdMode();
@@ -36,6 +37,7 @@ if (environment.production) {
     PlanDetailComponent,
     ScheduleRowComponent,
     MapComponent,
+    MapDirectionComponent,
   ],
   providers: [
     EnumUtil,
@@ -46,6 +48,7 @@ if (environment.production) {
     PlanDetailComponent,
     ScheduleRowComponent,
     MapComponent,
+    MapDirectionComponent,
   ],
   bootstrap: [
     AppComponent,

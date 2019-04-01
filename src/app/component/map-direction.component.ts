@@ -1,32 +1,21 @@
-import { Component, ElementRef, NgZone, OnInit, ViewChild, Params } from 'ngx-onsenui';
+import { Component, ElementRef, NgZone, OnInit, ViewChild, Params, Input } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 import { FormControl } from '@angular/forms';
 import { MapsAPILoader } from '@agm/core';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 
 @Component({
-  selector: 'ons-page[page]',
+  selector: 'app-map-direction',
   template: `
-    <ons-page class="page">
-      <ons-toolbar>
-        <div class="left">
-          <ons-back-button>Back</ons-back-button>
-        </div>
-        <div class="center">Map</div>
-        <div class="right">
-          <ons-toolbar-button></ons-toolbar-button>
-        </div>
-      </ons-toolbar>
-      <div class="content">
-        <div id="autocomplete" class="form-group">
-          <input placeholder="場所を指定してください" autocorrect="on"
-            autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
-        </div>
-        <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom" (mapClick)="mapClick($event)">
-          <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
-        </agm-map>
+    <div class="content">
+      <div id="autocomplete" class="form-group">
+        <input placeholder="場所を指定してください" autocorrect="on"
+          autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
       </div>
-    </ons-page>
+      <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom" (mapClick)="mapClick($event)">
+        <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
+      </agm-map>
+    </div>
   `,
   styles: [`
     agm-map { height: 100%; }
@@ -34,8 +23,8 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
     #autocomplete input { width: 100%; font-size: 1.2em; opacity: 0.9; border-radius: 6px; padding: 6px; }
   `]
 })
-export class MapComponent implements OnInit {
-  shceRowPlace: ScheduleRowPlace;
+export class MapDirectionComponent implements OnInit {
+  _rowPlace: ScheduleRowPlace;
   latitude: number;
   longitude: number;
   searchControl: FormControl;
@@ -47,10 +36,11 @@ export class MapComponent implements OnInit {
   constructor(
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone,
-    params: Params
-  ) {
-    this.shceRowPlace = params.data;
-  }
+  ) {}
+
+  @Input()
+  set shceRowPlace(shceRowPlace: ScheduleRowPlace) { this._rowPlace = shceRowPlace; }
+  get shceRowPlace(): ScheduleRowPlace { return this._rowPlace; }
 
   ngOnInit() {
     // set google maps defaults

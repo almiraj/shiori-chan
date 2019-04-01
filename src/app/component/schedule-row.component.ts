@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, ViewChildren, OnsNavigator } from 'ngx-onsenui';
+import { Component, Input, OnsNavigator } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
 import { ScheduleRow } from '../entity/schedule-row';
@@ -13,13 +13,13 @@ import { MapComponent } from './map.component';
   template: `
     <ons-list-item [ngClass]="{ 'edit-item': isEdit }">
       <div class="rel">
-        <div *ngIf="placeRow" class="left-icon"
-            [ngClass]="{ 'left-icon-edit': isEdit, 'with-to-time': placeRow.fromTime !== placeRow.toTime }">
+        <div *ngIf="shceRowPlace" class="left-icon"
+            [ngClass]="{ 'left-icon-edit': isEdit, 'with-to-time': shceRowPlace.fromTime !== shceRowPlace.toTime }">
           <i class="fas fa-flag-checkered"></i>
         </div>
-        <div *ngIf="movingRow && isEdit" class="left-icon-viechle">
+        <div *ngIf="shceRowMoving && isEdit" class="left-icon-viechle">
           <label *ngFor="let v of ViechleTypeUtil.values(); let i = index" (change)="changeViechle(v)">
-            <input type="radio" [name]="'viechleTypes-' + i" [value]="movingRow.viechleType" [checked]="v === movingRow.viechleType">
+            <input type="radio" [name]="'vt-' + i" [value]="shceRowMoving.viechleType" [checked]="v === shceRowMoving.viechleType">
             <i [ngClass]="{
               'fas': true,
               'fa-walking': v === ViechleType.WALK,
@@ -34,51 +34,52 @@ import { MapComponent } from './map.component';
               'fa-ship': v === ViechleType.SHIP,
               'fa-tram': v === ViechleType.TRAM,
               'fa-helicopter': v === ViechleType.HELICOPTER,
-              'selected': v === movingRow.viechleType
+              'selected': v === shceRowMoving.viechleType
             }"></i>
           </label>
         </div>
-        <div *ngIf="placeRow && !isEdit" class="fromToTime">
-          {{placeRow.fromTime}}
+        <div *ngIf="shceRowPlace && !isEdit" class="fromToTime">
+          {{shceRowPlace.fromTime}}
           <br>
-          <span *ngIf="placeRow.fromTime != placeRow.toTime">{{placeRow.toTime}}</span>
+          <span *ngIf="shceRowPlace.fromTime != shceRowPlace.toTime">{{shceRowPlace.toTime}}</span>
         </div>
-        <div *ngIf="placeRow && isEdit" class="fromToTime">
-          <ons-input type="time" modifier="material underbar" [(ngModel)]="placeRow.fromTime" (change)="syncToTime()"></ons-input>
+        <div *ngIf="shceRowPlace && isEdit" class="fromToTime">
+          <ons-input type="time" modifier="material underbar" [(ngModel)]="shceRowPlace.fromTime" (change)="syncToTime()"></ons-input>
           <br>
-          <ons-input type="time" modifier="material underbar" [(ngModel)]="placeRow.toTime"></ons-input>
+          <ons-input type="time" modifier="material underbar" [(ngModel)]="shceRowPlace.toTime"></ons-input>
         </div>
-        <div *ngIf="movingRow && !isEdit" class="viechle-type">
+        <div *ngIf="shceRowMoving && !isEdit" class="viechle-type">
           <i [ngClass]="{
             'fas': true,
-            'fa-walking': movingRow.viechleType === ViechleType.WALK,
-            'fa-swimmer': movingRow.viechleType === ViechleType.SWIMMER,
-            'fa-bicycle': movingRow.viechleType === ViechleType.BICYCLE,
-            'fa-motorcycle': movingRow.viechleType === ViechleType.MOTORCYCLE,
-            'fa-car': movingRow.viechleType === ViechleType.CAR,
-            'fa-taxi': movingRow.viechleType === ViechleType.TAXI,
-            'fa-bus-alt': movingRow.viechleType === ViechleType.BUS,
-            'fa-train': movingRow.viechleType === ViechleType.TRAIN,
-            'fa-plane': movingRow.viechleType === ViechleType.AIRPLAIN,
-            'fa-ship': movingRow.viechleType === ViechleType.SHIP,
-            'fa-tram': movingRow.viechleType === ViechleType.TRAM,
-            'fa-helicopter': movingRow.viechleType === ViechleType.HELICOPTER
+            'fa-walking': shceRowMoving.viechleType === ViechleType.WALK,
+            'fa-swimmer': shceRowMoving.viechleType === ViechleType.SWIMMER,
+            'fa-bicycle': shceRowMoving.viechleType === ViechleType.BICYCLE,
+            'fa-motorcycle': shceRowMoving.viechleType === ViechleType.MOTORCYCLE,
+            'fa-car': shceRowMoving.viechleType === ViechleType.CAR,
+            'fa-taxi': shceRowMoving.viechleType === ViechleType.TAXI,
+            'fa-bus-alt': shceRowMoving.viechleType === ViechleType.BUS,
+            'fa-train': shceRowMoving.viechleType === ViechleType.TRAIN,
+            'fa-plane': shceRowMoving.viechleType === ViechleType.AIRPLAIN,
+            'fa-ship': shceRowMoving.viechleType === ViechleType.SHIP,
+            'fa-tram': shceRowMoving.viechleType === ViechleType.TRAM,
+            'fa-helicopter': shceRowMoving.viechleType === ViechleType.HELICOPTER
           }"></i>
         </div>
-        <div *ngIf="placeRow && !isEdit" class="description" [ngClass]="{ 'with-to-time': placeRow.fromTime !== placeRow.toTime }">
-          {{placeRow.description}}
+        <div *ngIf="shceRowPlace && !isEdit" class="description"
+            [ngClass]="{ 'with-to-time': shceRowPlace.fromTime !== shceRowPlace.toTime }">
+          {{shceRowPlace.description}}
           <div class="baggage pre">{{row.memo}}</div>
         </div>
-        <div *ngIf="movingRow && !isEdit" class="description interval">
-          ({{movingRow.getIntervalLabel()}})
+        <div *ngIf="shceRowMoving && !isEdit" class="description interval">
+          ({{shceRowMoving.getIntervalLabel()}})
           <div class="baggage pre">{{row.memo}}</div>
         </div>
-        <div *ngIf="placeRow && isEdit" class="description-edit">
-          <ons-input type="text" modifier="material underbar" [(ngModel)]="placeRow.description"></ons-input>
+        <div *ngIf="shceRowPlace && isEdit" class="description-edit">
+          <ons-input type="text" modifier="material underbar" [(ngModel)]="shceRowPlace.description"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
           </div>
-        <div *ngIf="movingRow && isEdit" class="description-edit">
-          所要時間：<ons-input type="time" modifier="material underbar" [(ngModel)]="movingRow.interval"></ons-input>
+        <div *ngIf="shceRowMoving && isEdit" class="description-edit">
+          所要時間：<ons-input type="time" modifier="material underbar" [(ngModel)]="shceRowMoving.interval"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
         <div *ngIf="!isEdit">
@@ -86,9 +87,9 @@ import { MapComponent } from './map.component';
             <a [href]="row.url" target="_blank">
               <i [ngClass]="{
                 'fas': true,
-                'fa-map-marked-alt': placeRow,
-                'fa-external-link-alt': movingRow,
-                'with-to-time': placeRow && placeRow.fromTime !== placeRow.toTime
+                'fa-map-marked-alt': shceRowPlace,
+                'fa-external-link-alt': shceRowMoving,
+                'with-to-time': shceRowPlace && shceRowPlace.fromTime !== shceRowPlace.toTime
               }"></i>
             </a>
           </div>
@@ -96,8 +97,8 @@ import { MapComponent } from './map.component';
         <div *ngIf="isEdit">
           <div class="right-icon">
             <i class="far fa-window-close" (click)="confirmDelete()"></i>
-            <div *ngIf="placeRow" class="right-bottom-icon">
-              <i class="fas fa-map-marked-alt" (click)="toMap(placeRow)"></i>
+            <div *ngIf="shceRowPlace" class="right-bottom-icon">
+              <i class="fas fa-map-marked-alt" (click)="toMap(shceRowPlace)"></i>
             </div>
           </div>
         </div>
@@ -147,13 +148,13 @@ export class ScheduleRowComponent {
   set row(row: ScheduleRow) { this._row = row; }
   get row(): ScheduleRow { return this._row; }
 
-  get placeRow(): ScheduleRowPlace {
+  get shceRowPlace(): ScheduleRowPlace {
     if (!this._row.isMoving) {
       return <ScheduleRowPlace>this._row;
     }
     return null;
   }
-  get movingRow(): ScheduleRowMoving {
+  get shceRowMoving(): ScheduleRowMoving {
     if (this._row.isMoving) {
       return <ScheduleRowMoving>this._row;
     }
@@ -169,14 +170,14 @@ export class ScheduleRowComponent {
   ) {}
 
   syncToTime() {
-    if (!this.placeRow.toTime || this.placeRow.toTime === this._prevFromTime) {
-      this.placeRow.toTime = this.placeRow.fromTime;
+    if (!this.shceRowPlace.toTime || this.shceRowPlace.toTime === this._prevFromTime) {
+      this.shceRowPlace.toTime = this.shceRowPlace.fromTime;
     }
-    this._prevFromTime = this.placeRow.fromTime;
+    this._prevFromTime = this.shceRowPlace.fromTime;
   }
   changeViechle(v: ViechleType) {
-    if (this.movingRow) {
-      this.movingRow.viechleType = v;
+    if (this.shceRowMoving) {
+      this.shceRowMoving.viechleType = v;
     }
   }
   confirmDelete() {
@@ -191,7 +192,7 @@ export class ScheduleRowComponent {
       }
     });
   }
-  toMap(placeRow: ScheduleRowPlace) {
-    this.navi.element.pushPage(MapComponent, { data: placeRow });
+  toMap(shceRowPlace: ScheduleRowPlace) {
+    this.navi.element.pushPage(MapComponent, { data: shceRowPlace });
   }
 }

@@ -49,6 +49,9 @@ import { EnumUtil } from '../service/enum-util.service';
             <ons-input type="text" id="planNameInput" modifier="material underbar" [(ngModel)]="plan.name"></ons-input>
           </div>
         </ons-card>
+        <ons-card>
+          <app-map-direction shceRowPlace="plan[0].schedules[0]"></app-map-direction>
+        </ons-card>
         <ons-card #buggage>
           <div *ngIf="!buggage.isEdit" class="pencil" (click)="buggage.isEdit = !buggage.isEdit">
             <i class="fas fa-pencil-alt"></i>
