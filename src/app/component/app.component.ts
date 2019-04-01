@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { PlanComponent } from './plan.component';
+import { PlanListComponent } from './plan-list.component';
 
 @Component({
   selector: 'app-root',
@@ -10,5 +10,5 @@ import { PlanComponent } from './plan.component';
   styles: []
 })
 export class AppComponent {
-  page = PlanComponent;
+  page = PlanListComponent;
 }

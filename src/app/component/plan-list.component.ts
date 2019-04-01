@@ -39,7 +39,7 @@ import { MapComponent } from './map.component';
     '.plan-card img { width: 100%; }',
   ]
 })
-export class PlanComponent {
+export class PlanListComponent {
   plans: Plan[];
   dialogButtonName: string;
 
