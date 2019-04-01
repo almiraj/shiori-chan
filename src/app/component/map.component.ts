@@ -23,7 +23,7 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
           <input placeholder="場所を指定してください" autocorrect="on"
             autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
         </div>
-        <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
+        <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom" (mapClick)="mapClick($event)">
           <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
         </agm-map>
       </div>
@@ -90,8 +90,6 @@ export class MapComponent implements OnInit {
           }
 
           // set latitude, longitude and zoom
-          console.log(place); // this.placeRow.address = this.latitude = place.geometry.location.lat();
-
           this.placeRow.address = this.searchElementRef.nativeElement.value = place.name;
           this.placeRow.lat = this.latitude = place.geometry.location.lat();
           this.placeRow.lng = this.longitude = place.geometry.location.lng();
@@ -101,13 +99,8 @@ export class MapComponent implements OnInit {
     });
   }
 
-  private setCurrentPosition() {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
-        this.zoom = 12;
-      });
-    }
+  mapClick(event: any) {
+    this.placeRow.lat = this.latitude = event.coords.lat;
+    this.placeRow.lng = this.longitude = event.coords.lng;
   }
 }
