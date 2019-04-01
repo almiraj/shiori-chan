@@ -8,6 +8,5 @@ export class ScheduleRowPlace implements ScheduleRow {
   fromTime: string;
   toTime: string;
   address: string;
-  lat: number;
-  lng: number;
+  latLng: google.maps.LatLng;
 }

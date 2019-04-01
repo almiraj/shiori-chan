@@ -1,3 +1,5 @@
+/// <reference types="@types/googlemaps" />
+
 import { enableProdMode, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -7,7 +9,7 @@ import { environment } from '../environments/environment';
 
 import { ThemeImgPipe } from './pipe/theme-img.pipe';
 import { AppComponent } from './component/app.component';
-import { PlanComponent } from './component/plan.component';
+import { PlanListComponent } from './component/plan-list.component';
 import { PlanDetailComponent } from './component/plan-detai.component';
 import { ScheduleRowComponent } from './component/schedule-row.component';
 import { EnumUtil } from './service/enum-util.service';
@@ -33,7 +35,7 @@ if (environment.production) {
   declarations: [
     ThemeImgPipe,
     AppComponent,
-    PlanComponent,
+    PlanListComponent,
     PlanDetailComponent,
     ScheduleRowComponent,
     MapComponent,
@@ -44,7 +46,7 @@ if (environment.production) {
     PlanService,
   ],
   entryComponents: [
-    PlanComponent,
+    PlanListComponent,
     PlanDetailComponent,
     ScheduleRowComponent,
     MapComponent,

@@ -54,9 +54,9 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // set google maps defaults
-    if (this.shceRowPlace.lat && this.shceRowPlace.lng) {
-      this.latitude = this.shceRowPlace.lat;
-      this.longitude = this.shceRowPlace.lng;
+    if (this.shceRowPlace.latLng) {
+      this.latitude = this.shceRowPlace.latLng.lat();
+      this.longitude = this.shceRowPlace.latLng.lng();
     } else if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitude = position.coords.latitude;
@@ -73,7 +73,7 @@ export class MapComponent implements OnInit {
 
     // load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
-      const autocomplete = new window['google'].maps.places.Autocomplete(this.searchElementRef.nativeElement, {});
+      const autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {});
       if (this.shceRowPlace.address) {
         this.searchElementRef.nativeElement.value = this.shceRowPlace.address;
       }
@@ -81,7 +81,7 @@ export class MapComponent implements OnInit {
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
           // get the place result
-          const place = window['google'].maps.places.PlaceResult = autocomplete.getPlace();
+          const place = autocomplete.getPlace();
 
           // verify result
           if (place.geometry === undefined || place.geometry === null) {
@@ -90,8 +90,9 @@ export class MapComponent implements OnInit {
 
           // set latitude, longitude and zoom
           this.shceRowPlace.address = this.searchElementRef.nativeElement.value = place.name;
-          this.shceRowPlace.lat = this.latitude = place.geometry.location.lat();
-          this.shceRowPlace.lng = this.longitude = place.geometry.location.lng();
+          this.shceRowPlace.latLng = place.geometry.location;
+          this.latitude = this.shceRowPlace.latLng.lat();
+          this.longitude = this.shceRowPlace.latLng.lng();
           this.zoom = 17;
         });
       });
@@ -99,7 +100,6 @@ export class MapComponent implements OnInit {
   }
 
   mapClick(event: any) {
-    this.shceRowPlace.lat = this.latitude = event.coords.lat;
-    this.shceRowPlace.lng = this.longitude = event.coords.lng;
+    this.shceRowPlace.latLng = new google.maps.LatLng(event.coords.lat, event.coords.lng);
   }
 }
