@@ -15,7 +15,7 @@ import { ScheduleRowComponent } from './component/schedule-row.component';
 import { EnumUtil } from './service/enum-util.service';
 import { PlanService } from './service/plan.service';
 import { MapComponent } from './component/map.component';
-import { MapDirectionComponent } from './component/map-direction.component';
+import { MapDirectionComponent, MapDirectionInnerComponent } from './component/map-direction.component';
 
 if (environment.production) {
   enableProdMode();
@@ -29,7 +29,7 @@ if (environment.production) {
     ReactiveFormsModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDp3nJwrIGEGFfmlPPP_iaN-fuDRkMxou8',
-      libraries: [ 'places' ]
+      libraries: [ 'places', 'directions' ]
     }),
   ],
   declarations: [
@@ -40,6 +40,7 @@ if (environment.production) {
     ScheduleRowComponent,
     MapComponent,
     MapDirectionComponent,
+    MapDirectionInnerComponent,
   ],
   providers: [
     EnumUtil,
@@ -51,6 +52,7 @@ if (environment.production) {
     ScheduleRowComponent,
     MapComponent,
     MapDirectionComponent,
+    MapDirectionInnerComponent,
   ],
   bootstrap: [
     AppComponent,

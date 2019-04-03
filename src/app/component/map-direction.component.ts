@@ -1,14 +1,64 @@
-import { Component, ElementRef, NgZone, OnInit, ViewChild, Params, Input } from 'ngx-onsenui';
+import { Component,  NgZone, OnInit, Input, ViewChild, ElementRef, ContentChild, Directive } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 import { FormControl } from '@angular/forms';
-import { MapsAPILoader } from '@agm/core';
-import { ScheduleRowPlace } from '../entity/schedule-row-place';
+import { MapsAPILoader, AgmMap, GoogleMapsAPIWrapper } from '@agm/core';
+import { Plan } from '../entity/plan';
+
+@Component({
+  selector: 'app-map-inner-direction',
+  template: ''
+})
+export class MapDirectionInnerComponent implements OnInit {
+  _plan: Plan;
+  latitude: number;
+  longitude: number;
+  searchControl: FormControl;
+  zoom = 17;
+
+  constructor(
+    private mapsAPILoader: MapsAPILoader,
+    private googleMapsAPIWrapper: GoogleMapsAPIWrapper,
+    private ngZone: NgZone,
+  ) {}
+
+  @Input()
+  set place(plan: Plan) { this._plan = plan; }
+  get place(): Plan { return this._plan; }
+
+  ngOnInit() {
+    this.googleMapsAPIWrapper.getNativeMap().then(map => {
+      this.ngZone.run(() => {
+        this.latitude = 41.85;
+        this.longitude = -87.65;
+        this.zoom = 6;
+        const directionsDisplay = new google.maps.DirectionsRenderer();
+        directionsDisplay.setMap(<any>map);
+
+        const directionsService = new google.maps.DirectionsService();
+        directionsService.route({
+          origin: 'Halifax, NS',
+          destination: 'Los Angeles, CA',
+          waypoints: [{ location: 'montreal quebec', stopover: true }, { location: 'chicago, il', stopover: true }],
+          optimizeWaypoints: true,
+          travelMode: google.maps.TravelMode.DRIVING
+        }, function(response, status) {
+          if (status === google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+      });
+    });
+  }
+}
 
 @Component({
   selector: 'app-map-direction',
   template: `
-    <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom" (mapClick)="mapClick($event)">
+    <agm-map id="gmap" [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
       <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
+      <app-map-inner-direction></app-map-inner-direction>
     </agm-map>
   `,
   styles: [`
@@ -17,51 +67,53 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
     #autocomplete input { width: 100%; font-size: 1.2em; opacity: 0.9; border-radius: 6px; padding: 6px; }
   `]
 })
-export class MapDirectionComponent implements OnInit {
-  _rowPlace: ScheduleRowPlace;
+export class MapDirectionComponent {
+  _plan: Plan;
   latitude: number;
   longitude: number;
   searchControl: FormControl;
   zoom = 17;
 
-  constructor(
-    private mapsAPILoader: MapsAPILoader,
-    private ngZone: NgZone,
-  ) {}
+//   constructor(
+//     private mapsAPILoader: MapsAPILoader,
+//     private googleMapsAPIWrapper: GoogleMapsAPIWrapper,
+//     private ngZone: NgZone,
+//   ) {}
 
   @Input()
-  set shceRowPlace(shceRowPlace: ScheduleRowPlace) { this._rowPlace = shceRowPlace; }
-  get shceRowPlace(): ScheduleRowPlace { return this._rowPlace; }
+  set place(plan: Plan) { this._plan = plan; }
+  get place(): Plan { return this._plan; }
 
-  ngOnInit() {
-    // set google maps defaults
-    if (this.shceRowPlace.lat) {
-      this.latitude = this.shceRowPlace.lat;
-      this.longitude = this.shceRowPlace.lng;
-    } else if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
-      });
-    } else {
-      this.latitude = 34.6938877;
-      this.longitude = 135.50192900000002;
-      this.zoom = 6; // 広範囲で表示
-    }
+//   ngOnInit() {
+//     this.googleMapsAPIWrapper.getNativeMap().then(map => {
+// console.log(map);
+//     });
+//     this.mapsAPILoader.load().then(() => {
+//       this.ngZone.run(() => {
+//     this.googleMapsAPIWrapper.getNativeMap().then(map => {
+// console.log(map);
+//     });
+//         this.latitude = 41.85;
+//         this.longitude = -87.65;
+//         this.zoom = 6;
+//         const directionsDisplay = new google.maps.DirectionsRenderer();
+//         // directionsDisplay.setMap(new google.maps.Map(<any>document.getElementsByClassName('gm-style')[0]));
 
-    // create search FormControl
-    this.searchControl = new FormControl();
-
-    // load Places Autocomplete
-    this.mapsAPILoader.load().then(() => {
-    });
-  }
-
-  mapClick(event: any) {
-    this.shceRowPlace.lat = event.coords.lat;
-    this.shceRowPlace.lng = event.coords.lng;
-
-    this.latitude = this.shceRowPlace.lat;
-    this.longitude = this.shceRowPlace.lng;
-  }
+//         const directionsService = new google.maps.DirectionsService();
+//         directionsService.route({
+//           origin: 'Halifax, NS',
+//           destination: 'Los Angeles, CA',
+//           waypoints: [{ location: 'montreal quebec', stopover: true }, { location: 'chicago, il', stopover: true }],
+//           optimizeWaypoints: true,
+//           travelMode: google.maps.TravelMode.DRIVING
+//         }, function(response, status) {
+//           if (status === google.maps.DirectionsStatus.OK) {
+//             directionsDisplay.setDirections(response);
+//           } else {
+//             window.alert('Directions request failed due to ' + status);
+//           }
+//         });
+//       });
+//     });
+//   }
 }
