@@ -64,8 +64,9 @@ export class PlanService {
       row.fromTime = row.toTime = '09:10';
       row.toTime = '09:13';
       row.description = '新大阪駅';
-      row.url = 'https://www.google.com/maps/place/%E6%96%B0%E5%A4%A7%E9%98%AA%E9%A7%85/@34.7334658,135.5002547,15z/'
-        + 'data=!4m5!3m4!1s0x0:0x3bd7c4e0bf1076cf!8m2!3d34.7334658!4d135.5002547';
+      row.address = '新大阪駅';
+      row.lat = 34.7334658;
+      row.lng = 135.50025470000003;
       return row;
     })());
     p.schedules[0].rows.push((() => {
@@ -83,9 +84,9 @@ export class PlanService {
       const row = new ScheduleRowPlace();
       row.fromTime = row.toTime = '09:46';
       row.description = 'ユニバーサルシティ駅';
-      row.url = 'https://www.google.com/maps/place/%E3%83%A6%E3%83%8B%E3%83%90%E3%83%BC%E3%82%B5%E3%83%'
-        + 'AB%E3%82%B7%E3%83%86%E3%82%A3%E9%A7%85/@34.6678432,135.4363651,17z/data=!3m1!4b1!4m5!3m4!'
-        + '1s0x6000e890dcaf65db:0x44b3a88239419885!8m2!3d34.6678388!4d135.4385538';
+      row.address = 'ユニバーサルシティ駅';
+      row.lat = 34.6678388;
+      row.lng = 135.43855380000002;
       return row;
     })());
 

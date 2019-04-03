@@ -19,7 +19,7 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
       </ons-toolbar>
       <div class="content">
         <div id="autocomplete" class="form-group">
-          <input placeholder="場所を指定してください" autocorrect="on"
+          <input [attr.disabled]="readOnly" placeholder="場所を検索してください" autocorrect="on"
             autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
         </div>
         <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom" (mapClick)="mapClick($event)">
@@ -36,6 +36,7 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
 })
 export class MapComponent implements OnInit {
   shceRowPlace: ScheduleRowPlace;
+  readOnly: boolean;
   latitude: number;
   longitude: number;
   searchControl: FormControl;
@@ -49,14 +50,15 @@ export class MapComponent implements OnInit {
     private ngZone: NgZone,
     params: Params
   ) {
-    this.shceRowPlace = params.data;
+    this.shceRowPlace = params.data.shceRowPlace;
+    this.readOnly = params.data.readOnly;
   }
 
   ngOnInit() {
     // set google maps defaults
-    if (this.shceRowPlace.latLng) {
-      this.latitude = this.shceRowPlace.latLng.lat();
-      this.longitude = this.shceRowPlace.latLng.lng();
+    if (this.shceRowPlace.lat) {
+      this.latitude = this.shceRowPlace.lat;
+      this.longitude = this.shceRowPlace.lng;
     } else if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitude = position.coords.latitude;
@@ -77,7 +79,6 @@ export class MapComponent implements OnInit {
       if (this.shceRowPlace.address) {
         this.searchElementRef.nativeElement.value = this.shceRowPlace.address;
       }
-
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
           // get the place result
@@ -90,9 +91,8 @@ export class MapComponent implements OnInit {
 
           // set latitude, longitude and zoom
           this.shceRowPlace.address = this.searchElementRef.nativeElement.value = place.name;
-          this.shceRowPlace.latLng = place.geometry.location;
-          this.latitude = this.shceRowPlace.latLng.lat();
-          this.longitude = this.shceRowPlace.latLng.lng();
+          this.latitude = this.shceRowPlace.lat = place.geometry.location.lat();
+          this.longitude = this.shceRowPlace.lng = place.geometry.location.lng();
           this.zoom = 17;
         });
       });
@@ -100,6 +100,15 @@ export class MapComponent implements OnInit {
   }
 
   mapClick(event: any) {
-    this.shceRowPlace.latLng = new google.maps.LatLng(event.coords.lat, event.coords.lng);
-  }
+    // 読み取り専用ならアンカーの変更はさせない
+    if (this.readOnly) {
+      return;
+    }
+    this.shceRowPlace.address = this.searchElementRef.nativeElement.value = '';
+    this.shceRowPlace.lat = event.coords.lat;
+    this.shceRowPlace.lng = event.coords.lng;
+
+    this.latitude = this.shceRowPlace.lat;
+    this.longitude = this.shceRowPlace.lng;
+}
 }

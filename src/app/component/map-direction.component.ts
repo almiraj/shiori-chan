@@ -35,9 +35,9 @@ export class MapDirectionComponent implements OnInit {
 
   ngOnInit() {
     // set google maps defaults
-    if (this.shceRowPlace.latLng) {
-      this.latitude = this.shceRowPlace.latLng.lat();
-      this.longitude = this.shceRowPlace.latLng.lng();
+    if (this.shceRowPlace.lat) {
+      this.latitude = this.shceRowPlace.lat;
+      this.longitude = this.shceRowPlace.lng;
     } else if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitude = position.coords.latitude;
@@ -58,6 +58,10 @@ export class MapDirectionComponent implements OnInit {
   }
 
   mapClick(event: any) {
-    this.shceRowPlace.latLng = new google.maps.LatLng(event.coords.lat, event.coords.lng);
+    this.shceRowPlace.lat = event.coords.lat;
+    this.shceRowPlace.lng = event.coords.lng;
+
+    this.latitude = this.shceRowPlace.lat;
+    this.longitude = this.shceRowPlace.lng;
   }
 }

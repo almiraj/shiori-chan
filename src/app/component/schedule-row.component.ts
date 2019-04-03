@@ -83,12 +83,14 @@ import { MapComponent } from './map.component';
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
         <div *ngIf="!isEdit">
+          <div *ngIf="shceRowPlace && shceRowPlace.lat" class="right-icon">
+            <i class="fas fa-map-marked-alt link-color" (click)="toMap(shceRowPlace, true)"></i>
+          </div>
           <div class="right-icon" *ngIf="row.url">
             <a [href]="row.url" target="_blank">
               <i [ngClass]="{
                 'fas': true,
-                'fa-map-marked-alt': shceRowPlace,
-                'fa-external-link-alt': shceRowMoving,
+                'fa-external-link-alt': true,
                 'with-to-time': shceRowPlace && shceRowPlace.fromTime !== shceRowPlace.toTime
               }"></i>
             </a>
@@ -130,6 +132,7 @@ import { MapComponent } from './map.component';
     '.memo { font-size: 0.8em; color: #666; width: 85%; margin-top: 0.5em; }',
     'textarea.memo { height: 3.4em; }',
     '.pre { white-space: pre-wrap; }',
+    '.link-color { color: #0076ff; }',
   ]
 })
 export class ScheduleRowComponent {
@@ -192,7 +195,7 @@ export class ScheduleRowComponent {
       }
     });
   }
-  toMap(shceRowPlace: ScheduleRowPlace) {
-    this.navi.element.pushPage(MapComponent, { data: shceRowPlace });
+  toMap(shceRowPlace: ScheduleRowPlace, readOnly?: boolean) {
+    this.navi.element.pushPage(MapComponent, { data: { shceRowPlace, readOnly} });
   }
 }
