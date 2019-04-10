@@ -8,6 +8,12 @@ export class ScheduleRowMoving implements ScheduleRow {
   interval = '00:00';
   viechleType = ViechleType.WALK;
 
+  static desrialize(raw: any) {
+    raw.isMoving = true;
+    raw.getIntervalLabel = new ScheduleRowMoving().getIntervalLabel;
+    return raw;
+  }
+
   getIntervalLabel() {
     return this.interval.replace(/(\d+):(\d+)/, (a0: string, a1: string, a2: string) => {
       if (a1 === '00' && a2 === '00') {

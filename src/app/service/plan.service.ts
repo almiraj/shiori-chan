@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { v1 as uuid } from 'uuid';
 
 import { Plan } from '../entity/plan';
 import { PlanTheme } from '../entity/plan-theme';
@@ -12,28 +13,58 @@ export class PlanService {
   constructor(
   ) {}
 
+  static fromLocal(): Array<Plan> {
+    return JSON.parse(localStorage.getItem('plans'));
+  }
+  static toLocal(plans: Array<Plan>): void {
+    localStorage.setItem('plans', JSON.stringify(plans));
+  }
+  static getId(): string {
+    return window['device'] ? window['device'].uuid : uuid();
+  }
+
   createPlan(name: string, theme: PlanTheme): Promise<Plan> {
     const p = new Plan();
-    p.id = 'asdfasdf';
+    p.id = PlanService.getId();
     p.name = name;
     p.theme = theme;
     return Promise.resolve(p);
   }
-
   getPlans(): Promise<Plan[]> {
-    const uuid = window['device'] ? window['device'].uuid : 'TEST_UUID';
-
-    return Promise.resolve([this.getSamplePlan()]);
+    // プランが保存されていればそれを返却する
+    const plans = PlanService.fromLocal();
+    if (plans) {
+      plans.map(plan => Plan.desrialize(plan));
+      return Promise.resolve(plans);
+    }
+    // まだプランが保存されてなければサンプルを保存しつつ返却する
+    const samplePlan = this.getSamplePlan();
+    this.savePlan(samplePlan);
+    return Promise.resolve([samplePlan]);
   }
-
-  getPlan(id: String): Promise<Plan> {
-    const uuid = window['device'] ? window['device'].uuid : 'TEST_UUID';
-
-    return Promise.resolve(this.getSamplePlan());
+  savePlan(newPlan: Plan, savingItems?: Array<keyof Plan>) {
+    const plans = PlanService.fromLocal();
+    // 保存されているものがなければ、そのまま保存
+    if (!plans) {
+      PlanService.toLocal([newPlan]);
+      return;
+    }
+    // 保存されているものがあれば、IDの一致するプランの項目を書き換える
+    const newPlans = plans.map(plan => {
+      if (plan.id !== newPlan.id) {
+        return plan;
+      }
+      savingItems.forEach(item => {
+        plan[item] = newPlan[item];
+      });
+      return plan;
+    });
+    PlanService.toLocal(newPlans);
   }
 
   private getSamplePlan(): Plan {
     const p = new Plan();
+    p.id = PlanService.getId();
     p.name = '一泊二日の大阪旅行 in 2019/03/03';
     p.theme = PlanTheme.OSAKA;
     p.fromYmd = '2019/02/19';

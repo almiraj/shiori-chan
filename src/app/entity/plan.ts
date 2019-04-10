@@ -9,4 +9,9 @@ export class Plan {
   toYmd: string;
   baggage: string;
   schedules = new Array<Schedule>();
+
+  static desrialize(raw: any) {
+    raw.schedules.map((sched: any) => Schedule.desrialize(sched));
+    return raw;
+  }
 }

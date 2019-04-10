@@ -12,10 +12,11 @@ import { AppComponent } from './component/app.component';
 import { PlanListComponent } from './component/plan-list.component';
 import { PlanDetailComponent } from './component/plan-detai.component';
 import { ScheduleRowComponent } from './component/schedule-row.component';
-import { EnumUtil } from './service/enum-util.service';
+import { EnumUtil } from './util/enum.util';
 import { PlanService } from './service/plan.service';
 import { MapComponent } from './component/map.component';
 import { MapDirectionComponent, MapDirectionInnerComponent } from './component/map-direction.component';
+import { EditModeService } from './service/edit-mode.service';
 
 if (environment.production) {
   enableProdMode();
@@ -45,6 +46,7 @@ if (environment.production) {
   providers: [
     EnumUtil,
     PlanService,
+    EditModeService,
   ],
   entryComponents: [
     PlanListComponent,

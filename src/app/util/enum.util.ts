@@ -1,3 +1,6 @@
+import { Injectable } from 'ngx-onsenui';
+
+@Injectable()
 export class EnumUtil {
   indexes(target: any) {
     const arr = [];

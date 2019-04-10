@@ -1,4 +1,4 @@
-import { Component, Params, ViewChild, ElementRef } from 'ngx-onsenui';
+import { Component, Params, ViewChild, ElementRef, Inject } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 import { timer } from 'rxjs';
 
@@ -7,7 +7,9 @@ import { Schedule } from '../entity/schedule';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
 import { PlanTheme } from '../entity/plan-theme';
-import { EnumUtil } from '../service/enum-util.service';
+import { EnumUtil } from '../util/enum.util';
+import { EditModeService } from '../service/edit-mode.service';
+import { PlanService } from '../service/plan.service';
 
 @Component({
   selector: 'ons-page[page]',
@@ -23,18 +25,18 @@ import { EnumUtil } from '../service/enum-util.service';
         </div>
       </ons-toolbar>
       <div class="content">
-        <ons-card #head>
-          <div *ngIf="!head.isEdit" class="pencil" (click)="(head.isEdit = !head.isEdit) && (themesInitIdx = plan.theme)">
+        <ons-card>
+          <div *ngIf="headEdit.off" class="pencil" (click)="headEdit.toggle() && (themesInitIdx = plan.theme)">
             <i class="fas fa-pencil-alt"></i>
           </div>
-          <div *ngIf="head.isEdit" class="pencil check" (click)="head.isEdit = !head.isEdit">
+          <div *ngIf="headEdit.on" class="pencil check" (click)="headEdit.toggle()">
             <i class="fas fa-check-square"></i>
           </div>
-          <div *ngIf="!head.isEdit">
+          <div *ngIf="headEdit.off">
             <img [src]="plan.theme | themeImg">
             <div class="title">{{plan.name}}</div>
           </div>
-          <div *ngIf="head.isEdit">
+          <div *ngIf="headEdit.on">
             <div id="theme-edit-left">
               <ons-carousel #themes fullscreen swipeable auto-scroll overscrollable auto-scroll-ratio="0"
                   [attr.initial-index]="themesInitIdx" (postchange)="selectTheme()">
@@ -53,15 +55,15 @@ import { EnumUtil } from '../service/enum-util.service';
           <app-map-direction shceRowPlace="plan[0].schedules[0]"></app-map-direction>
         </ons-card>
         <ons-card #buggage>
-          <div *ngIf="!buggage.isEdit" class="pencil" (click)="buggage.isEdit = !buggage.isEdit">
+          <div *ngIf="baggageEdit.off" class="pencil" (click)="baggageEdit.toggle()">
             <i class="fas fa-pencil-alt"></i>
           </div>
-          <div *ngIf="buggage.isEdit" class="pencil check" (click)="buggage.isEdit = !buggage.isEdit">
+          <div *ngIf="baggageEdit.on" class="pencil check" (click)="baggageEdit.toggle()">
             <i class="fas fa-check-square"></i>
           </div>
           <div class="title">持ち物・メモ書き</div>
           <div class="content toggleArea">
-            <div *ngIf="buggage.isEdit" style="position: absolute; width: 100%; height: 100%;">
+            <div *ngIf="baggageEdit.on" style="position: absolute; width: 100%; height: 100%;">
               <textarea [(ngModel)]="plan.baggage"></textarea>
             </div>
             <div class="content pre">{{plan.baggage}}</div>
@@ -78,22 +80,22 @@ import { EnumUtil } from '../service/enum-util.service';
           <ons-carousel #schedules fullscreen swipeable auto-scroll overscrollable (postchange)="selectSchedule()">
             <ons-carousel-item *ngFor="let schedule of plan.schedules; let i = index">
               <ons-card>
-                <div *ngIf="!schedules.isEdit" class="pencil" (click)="schedules.isEdit = !schedules.isEdit">
+                <div *ngIf="schedulesEdit.off" class="pencil" (click)="schedulesEdit.toggle()">
                   <i class="fas fa-pencil-alt"></i>
                 </div>
-                <div *ngIf="schedules.isEdit" class="pencil check" (click)="schedules.isEdit = !schedules.isEdit">
+                <div *ngIf="schedulesEdit.on" class="pencil check" (click)="schedulesEdit.toggle()">
                   <i class="fas fa-check-square"></i>
                 </div>
                 <div class="title">{{schedule.name}}</div>
                 <div class="content">
                   <ons-list class="schedule-list">
                     <div *ngFor="let row of schedule.rows; let i = index">
-                      <div *ngIf="schedules.isEdit" class="add-schedule" (click)="addScheduleRow(i)">
+                      <div *ngIf="schedulesEdit.on" class="add-schedule" (click)="addScheduleRow(i)">
                         <i class="far fa-arrow-alt-circle-left"></i> 追加
                       </div>
-                      <app-schedule-row [schedule]="schedule" [row]="row" [isEdit]="schedules.isEdit"></app-schedule-row>
+                      <app-schedule-row [schedule]="schedule" [row]="row" [isEdit]="schedulesEdit.on"></app-schedule-row>
                     </div>
-                    <div *ngIf="schedules.isEdit" class="add-schedule" (click)="addScheduleRow(null)">
+                    <div *ngIf="schedulesEdit.on" class="add-schedule" (click)="addScheduleRow(null)">
                       <i class="far fa-arrow-alt-circle-left"></i> 追加
                     </div>
                   </ons-list>
@@ -125,21 +127,29 @@ import { EnumUtil } from '../service/enum-util.service';
     '.add-schedule { background-color: #f99; color: #fff; text-align: center; }',
     '.add-schedule > i { margin-top: 0.26em; }',
     '.schedule-list { background-position: top; }', // 底部のボーダーを消す
-  ]
+  ],
+  providers: [EditModeService]
 })
 export class PlanDetailComponent {
   @ViewChild('themes') themesRef: ElementRef;
   @ViewChild('schedules') schedulesRef: ElementRef;
+  headEdit = new EditModeService(this.planService);
+  baggageEdit = new EditModeService(this.planService);
+  schedulesEdit = new EditModeService(this.planService);
   planThemes = this.enumUtil.indexes(PlanTheme);
   plan: Plan;
   themesInitIdx = 0;
   scheduleIdx = 0;
 
   constructor(
+    private planService: PlanService,
     private enumUtil: EnumUtil,
     params: Params,
   ) {
     this.plan = params.data;
+    this.headEdit.setSavingItem(this.plan, 'theme', 'name');
+    this.baggageEdit.setSavingItem(this.plan, 'baggage');
+    this.schedulesEdit.setSavingItem(this.plan, 'schedules');
   }
 
   selectTheme() {

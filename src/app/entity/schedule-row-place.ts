@@ -10,4 +10,11 @@ export class ScheduleRowPlace implements ScheduleRow {
   address: string;
   lat: number;
   lng: number;
+
+  static desrialize(raw: any) {
+    raw.isMoving = false;
+    raw.lat = Number(raw.lat);
+    raw.lng = Number(raw.lng);
+    return raw;
+  }
 }
