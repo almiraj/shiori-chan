@@ -28,6 +28,7 @@
     "@fortawesome/fontawesome-free": "^5.7.2",
     "cordova-android": "^7.1.4",
     "cordova-plugin-whitelist": "1",
+    "cordova-plugin-x-socialsharing": "^5.4.4",
     "core-js": "^2.5.4",
     "ngx-onsenui": "^7.0.0",
     "onsenui": "^2.10.6",
@@ -64,7 +65,10 @@
   },
   "cordova": {
     "plugins": {
-      "cordova-plugin-whitelist": {}
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-x-socialsharing": {
+        "ANDROID_SUPPORT_V4_VERSION": "24.1.1+"
+      }
     },
     "platforms": [
       "android"
