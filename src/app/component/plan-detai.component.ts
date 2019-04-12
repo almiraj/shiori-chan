@@ -21,7 +21,7 @@ import { PlanService } from '../service/plan.service';
         </div>
         <div class="center">Plan</div>
         <div class="right">
-          <ons-toolbar-button></ons-toolbar-button>
+          <ons-toolbar-button (click)="share()">Share</ons-toolbar-button>
         </div>
       </ons-toolbar>
       <div class="content">
@@ -202,5 +202,8 @@ export class PlanDetailComponent {
         }
       }
     });
+  }
+  share() {
+    
   }
 }
