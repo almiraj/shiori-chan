@@ -69,5 +69,6 @@
     </platform>
     <hook src="hooks/copy-ios-icon-splash.bat" type="after_platform_add" />
     <hook src="hooks/copy-ios-icon-splash.sh" type="after_platform_add" />
+    <plugin name="cordova-plugin-email" spec="~1.2.7" />
     <engine name="android" spec="^7.1.4" />
 </widget>

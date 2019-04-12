@@ -204,6 +204,12 @@ export class PlanDetailComponent {
     });
   }
   share() {
-    
+    window['cordova'].plugins.email.open({
+      to:      'nohara@griffin-net.co.jp',
+      cc:      '',
+      bcc:     [''],
+      subject: 'Greetings',
+      body:    'How are you? Nice greetings from Leipzig'
+    });
   }
 }
