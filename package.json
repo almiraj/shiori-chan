@@ -26,6 +26,8 @@
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
     "@fortawesome/fontawesome-free": "^5.7.2",
+    "cordova-android": "^7.1.4",
+    "cordova-plugin-whitelist": "1",
     "core-js": "^2.5.4",
     "ngx-onsenui": "^7.0.0",
     "onsenui": "^2.10.6",
@@ -59,5 +61,13 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "typescript": "~3.2.2"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {}
+    },
+    "platforms": [
+      "android"
+    ]
   }
 }
