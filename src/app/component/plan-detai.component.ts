@@ -1,6 +1,7 @@
 import { Component, Params, ViewChild, ElementRef, Inject } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 import { timer } from 'rxjs';
+import * as QRCode from 'qrcode';
 
 import { Plan } from '../entity/plan';
 import { Schedule } from '../entity/schedule';
@@ -204,6 +205,23 @@ export class PlanDetailComponent {
     });
   }
   share() {
-    
+    QRCode.toDataURL(JSON.stringify(this.plan)
+      + JSON.stringify(this.plan)
+      + JSON.stringify(this.plan)
+      + JSON.stringify(this.plan)
+      + JSON.stringify(this.plan)
+    ).then(qrUrl => {
+      const qrAttachment = qrUrl.replace(/^data:image\/png;base64,/, 'base64:icon.png//');
+      window['cordova'].plugins.email.open({
+        to: [],
+        subject: '旅のしおり「' + this.plan.name + '」が共有されました',
+        body: '<b>' + 'しおりちゃん' + '</b>を起動して、右上の<b>＋</b>ボタンを押してください。<br>'
+          + '「共有されたしおりをコピーする」を選択し、添付されたQRコードを指定してください。<br>',
+        isHtml: true,
+        attachments: [qrAttachment]
+      });
+    }).catch(e => {
+      alert(String(e));
+    });
   }
 }
