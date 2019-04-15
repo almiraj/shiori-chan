@@ -1,6 +1,7 @@
-import { Component, Params, ViewChild, ElementRef, Inject } from 'ngx-onsenui';
+import { Component, Params, ViewChild, ElementRef } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 import { timer } from 'rxjs';
+import * as QRCode from 'qrcode';
 
 import { Plan } from '../entity/plan';
 import { Schedule } from '../entity/schedule';
@@ -10,6 +11,7 @@ import { PlanTheme } from '../entity/plan-theme';
 import { EnumUtil } from '../util/enum.util';
 import { EditModeService } from '../service/edit-mode.service';
 import { PlanService } from '../service/plan.service';
+import { AppConfig } from '../constant/app-cofing';
 
 @Component({
   selector: 'ons-page[page]',
@@ -204,12 +206,20 @@ export class PlanDetailComponent {
     });
   }
   share() {
-    window['cordova'].plugins.email.open({
-      to:      'nohara@griffin-net.co.jp',
-      cc:      '',
-      bcc:     [''],
-      subject: 'Greetings',
-      body:    'How are you? Nice greetings from Leipzig'
+    QRCode.toDataURL('JSON.stringify(this.plan)').then(qrUrl => {
+console.log(qrUrl);
+      const qrAttachment = qrUrl.replace(/^data:image\/png;base64,/, 'base64:icon.png//');
+console.log(qrAttachment);
+      window['cordova'].plugins.email.open({
+        to: '',
+        subject: '旅のしおり「' + this.plan.name + '」が共有されました',
+        body: '<b>' + AppConfig.NAME + '</b>を起動し、右上の<b>＋</b>ボタンを押してください。<br>'
+          + '「共有されたしおりをコピーする」を選択して、以下のQRコードを指定してください。<br>'
+          + '<br>'
+          + '<img src="' + qrUrl + '">',
+        isHtml: true,
+        attachments: qrAttachment
+      });
     });
   }
 }

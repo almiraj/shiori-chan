@@ -6,7 +6,7 @@ import { PlanTheme } from '../entity/plan-theme';
 import { Schedule } from '../entity/schedule';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
-import { ViechleType } from '../entity/viechle-type';
+import { ViechleType } from '../constant/viechle-type';
 
 @Injectable()
 export class PlanService {

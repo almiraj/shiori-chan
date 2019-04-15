@@ -5,7 +5,7 @@ import { ScheduleRow } from '../entity/schedule-row';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
 import { Schedule } from '../entity/schedule';
-import { ViechleType, ViechleTypeUtil } from '../entity/viechle-type';
+import { ViechleType, ViechleTypeUtil } from '../constant/viechle-type';
 import { MapComponent } from './map.component';
 
 @Component({

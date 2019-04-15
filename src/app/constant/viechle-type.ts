@@ -22,4 +22,3 @@ export class ViechleTypeUtil {
     return arr;
   }
 }
-

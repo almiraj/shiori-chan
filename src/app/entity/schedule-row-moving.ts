@@ -1,5 +1,5 @@
 import { ScheduleRow } from './schedule-row';
-import { ViechleType } from './viechle-type';
+import { ViechleType } from '../constant/viechle-type';
 
 export class ScheduleRowMoving implements ScheduleRow {
   isMoving = true;
