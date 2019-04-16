@@ -10,6 +10,7 @@ import { PlanTheme } from '../entity/plan-theme';
 import { EnumUtil } from '../util/enum.util';
 import { EditModeService } from '../service/edit-mode.service';
 import { PlanService } from '../service/plan.service';
+import { ShareService } from '../service/share.service';
 
 @Component({
   selector: 'ons-page[page]',
@@ -143,6 +144,7 @@ export class PlanDetailComponent {
 
   constructor(
     private planService: PlanService,
+    private shareService: ShareService,
     private enumUtil: EnumUtil,
     params: Params,
   ) {
@@ -204,6 +206,6 @@ export class PlanDetailComponent {
     });
   }
   share() {
-    
+    this.shareService.addPlan(this.plan);
   }
 }

@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { OnsenModule } from 'ngx-onsenui';
 import { AgmCoreModule } from '@agm/core';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 
 import { ThemeImgPipe } from './pipe/theme-img.pipe';
@@ -17,6 +19,7 @@ import { PlanService } from './service/plan.service';
 import { MapComponent } from './component/map.component';
 import { MapDirectionComponent, MapDirectionInnerComponent } from './component/map-direction.component';
 import { EditModeService } from './service/edit-mode.service';
+import { ShareService } from './service/share.service';
 
 if (environment.production) {
   enableProdMode();
@@ -32,6 +35,7 @@ if (environment.production) {
       apiKey: 'AIzaSyDp3nJwrIGEGFfmlPPP_iaN-fuDRkMxou8',
       libraries: [ 'places', 'directions' ]
     }),
+    AngularFireModule.initializeApp(environment.firebase),
   ],
   declarations: [
     ThemeImgPipe,
@@ -44,9 +48,11 @@ if (environment.production) {
     MapDirectionInnerComponent,
   ],
   providers: [
+    AngularFirestore,
     EnumUtil,
     PlanService,
     EditModeService,
+    ShareService,
   ],
   entryComponents: [
     PlanListComponent,
