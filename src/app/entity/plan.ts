@@ -10,8 +10,8 @@ export class Plan {
   baggage: string;
   schedules = new Array<Schedule>();
 
-  static desrialize(raw: any) {
-    raw.schedules.map((sched: any) => Schedule.desrialize(sched));
+  static parse(raw: any) {
+    raw.schedules.map((sched: any) => Schedule.parse(sched));
     return raw;
   }
 }

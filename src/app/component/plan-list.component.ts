@@ -41,7 +41,6 @@ import { MapComponent } from './map.component';
 })
 export class PlanListComponent {
   plans: Plan[];
-  dialogButtonName: string;
 
   constructor(
     private navi: OnsNavigator,
@@ -55,7 +54,20 @@ export class PlanListComponent {
   }
 
   createPlan() {
-    this.dialogButtonName = 'プラン作成';
+    ons.openActionSheet({
+      title: 'プラン作成',
+      cancelable: true,
+      buttons: [ '新しいプランを作成', '共有されたプランから作成', { label: 'キャンセル', icon: 'md-close' } ],
+      callback: (type: number) => {
+        if (type === 0) {
+          this.createNewPlan();
+        } else if (type === 1) {
+          this.createSharedPlan();
+        }
+      }
+    });
+  }
+  createNewPlan() {
     ons.notification.prompt({
       cancelable: true,
       title: '',
@@ -64,7 +76,22 @@ export class PlanListComponent {
       callback: (name: string) => {
         if (name) {
           this.planService
-            .createPlan(name, PlanTheme.CAFE)
+            .createNewPlan(name)
+            .then(p => this.plans.push(p));
+        }
+      }
+    });
+  }
+  createSharedPlan() {
+    ons.notification.prompt({
+      cancelable: true,
+      title: '',
+      message: '共有IDを入力してください',
+      buttonLabel: 'OK',
+      callback: (sharedId: string) => {
+        if (sharedId) {
+          this.planService
+            .createSharedPlan(sharedId)
             .then(p => this.plans.push(p));
         }
       }

@@ -9,9 +9,9 @@ export class Schedule {
     public name: string
   ) {}
 
-  static desrialize(raw: any) {
+  static parse(raw: any) {
     raw.rows.map((row: any) => {
-      return (row.isMoving === 'true') ? ScheduleRowMoving.desrialize(row) : ScheduleRowPlace.desrialize(row);
+      return (row.isMoving === 'true') ? ScheduleRowMoving.parse(row) : ScheduleRowPlace.parse(row);
     });
     return raw;
   }

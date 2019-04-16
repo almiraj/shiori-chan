@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { v1 as uuid } from 'uuid';
+import { map } from 'rxjs/operators';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { v4 as uuid } from 'uuid';
 
 import { Plan } from '../entity/plan';
 import { PlanTheme } from '../entity/plan-theme';
@@ -11,6 +13,7 @@ import { ViechleType } from '../entity/viechle-type';
 @Injectable()
 export class PlanService {
   constructor(
+    private afs: AngularFirestore
   ) {}
 
   static fromLocal(): Array<Plan> {
@@ -20,21 +23,34 @@ export class PlanService {
     localStorage.setItem('plans', JSON.stringify(plans));
   }
   static getId(): string {
-    return window['device'] ? window['device'].uuid : uuid();
+    const deviceId = (window['device'] && window['device'].uuid) || '';
+    return deviceId + ':' + uuid();
   }
 
-  createPlan(name: string, theme: PlanTheme): Promise<Plan> {
+  createNewPlan(name: string): Promise<Plan> {
     const p = new Plan();
     p.id = PlanService.getId();
     p.name = name;
-    p.theme = theme;
+    p.theme = PlanTheme.CAFE;
+    this.savePlan(p);
     return Promise.resolve(p);
+  }
+  createSharedPlan(sharedId: string): Promise<Plan> {
+    return this.afs.collection('plans').doc(sharedId).get()
+      .pipe(
+        map(doc => doc.data().data),
+        map(data => {
+          const plan = JSON.parse(data);
+          this.savePlan(plan);
+          return Plan.parse(JSON.parse(data));
+        })
+      ).toPromise();
   }
   getPlans(): Promise<Plan[]> {
     // プランが保存されていればそれを返却する
     const plans = PlanService.fromLocal();
     if (plans) {
-      plans.map(plan => Plan.desrialize(plan));
+      plans.map(plan => Plan.parse(plan));
       return Promise.resolve(plans);
     }
     // まだプランが保存されてなければサンプルを保存しつつ返却する

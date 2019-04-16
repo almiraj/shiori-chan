@@ -10,13 +10,14 @@ export class ShareService {
   ) {}
 
   addPlan(plan: Plan): Promise<void> {
-    const shareId = localStorage.getItem('shareId');
-    if (shareId) {
-      return this.afs.collection('plans').doc(shareId).update({ data: JSON.stringify(plan) });
+    const localStorageId = 'sharedId:' + plan.id;
+    const sharedId = localStorage.getItem(localStorageId);
+    if (sharedId) {
+      return this.afs.collection('plans').doc(sharedId).update({ data: JSON.stringify(plan) });
     }
     return this.afs.collection('plans').add({ data: JSON.stringify(plan) })
       .then(docRef => {
-        localStorage.setItem('shareId', docRef.id);
+        localStorage.setItem(localStorageId, docRef.id);
         console.log(docRef);
       });
   }
