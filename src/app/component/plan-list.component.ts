@@ -52,7 +52,6 @@ export class PlanListComponent {
   toDetail(plan: Plan) {
     this.navi.element.pushPage(PlanDetailComponent, { data: plan });
   }
-
   createPlan() {
     ons.openActionSheet({
       title: 'プラン作成',
@@ -75,9 +74,13 @@ export class PlanListComponent {
       buttonLabel: 'OK',
       callback: (name: string) => {
         if (name) {
-          this.planService
-            .createNewPlan(name)
-            .then(p => this.plans.push(p));
+          this.planService.createNewPlan(name)
+            .then(p => {
+              if (!this.planService.addPlan(p)) {
+                throw new Error('プラン追加に失敗しました');
+              }
+              this.plans.unshift(p);
+            });
         }
       }
     });
@@ -90,9 +93,26 @@ export class PlanListComponent {
       buttonLabel: 'OK',
       callback: (sharedId: string) => {
         if (sharedId) {
-          this.planService
-            .createSharedPlan(sharedId)
-            .then(p => this.plans.push(p));
+          this.planService.createSharedPlan(sharedId)
+            .then(createdPlan => {
+              // 追加できる場合は普通に追加する
+              if (this.planService.addPlan(createdPlan)) {
+                this.plans.unshift(createdPlan);
+                return;
+              }
+              // 追加できない場合は確認してから更新する
+              ons.notification.confirm({
+                message: '共有されたプランを更新してよろしいですか？',
+                cancelable: true,
+                callback: (i: number) => {
+                  if (i === 1) {
+                    this.planService.overwritePlan(createdPlan);
+                    this.plans = this.plans.map(p => (p.id === createdPlan.id) ? createdPlan : p);
+                  }
+                }
+              });
+            })
+            .catch(e => ons.notification.alert({ title: '', message: e }));
         }
       }
     });

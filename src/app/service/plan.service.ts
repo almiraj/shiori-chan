@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { v4 as uuid } from 'uuid';
 
@@ -16,39 +16,45 @@ export class PlanService {
     private afs: AngularFirestore
   ) {}
 
-  static fromLocal(): Array<Plan> {
+  private fromLocal(): Array<Plan> {
     return JSON.parse(localStorage.getItem('plans'));
   }
-  static toLocal(plans: Array<Plan>): void {
+  private toLocal(plans: Array<Plan>): void {
     localStorage.setItem('plans', JSON.stringify(plans));
   }
-  static getId(): string {
-    const deviceId = (window['device'] && window['device'].uuid) || '';
+  private getPlanId(): string {
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+      deviceId = uuid();
+      localStorage.setItem('deviceId', deviceId);
+    }
     return deviceId + ':' + uuid();
   }
 
   createNewPlan(name: string): Promise<Plan> {
     const p = new Plan();
-    p.id = PlanService.getId();
+    p.id = this.getPlanId();
     p.name = name;
     p.theme = PlanTheme.CAFE;
-    this.savePlan(p);
     return Promise.resolve(p);
   }
   createSharedPlan(sharedId: string): Promise<Plan> {
-    return this.afs.collection('plans').doc(sharedId).get()
-      .pipe(
-        map(doc => doc.data().data),
-        map(data => {
-          const plan = JSON.parse(data);
-          this.savePlan(plan);
-          return Plan.parse(JSON.parse(data));
-        })
-      ).toPromise();
+    return new Promise((resolve, reject) => {
+      this.afs.collection('plans').doc(sharedId).get()
+        .subscribe(
+          doc => {
+            if (!doc.exists) {
+              return reject('存在しない共有IDです');
+            }
+            return resolve(Plan.parse(JSON.parse(doc.data().data)));
+          },
+          e => reject(e)
+        );
+    });
   }
   getPlans(): Promise<Plan[]> {
     // プランが保存されていればそれを返却する
-    const plans = PlanService.fromLocal();
+    const plans = this.fromLocal();
     if (plans) {
       plans.map(plan => Plan.parse(plan));
       return Promise.resolve(plans);
@@ -58,11 +64,41 @@ export class PlanService {
     this.savePlan(samplePlan);
     return Promise.resolve([samplePlan]);
   }
-  savePlan(newPlan: Plan, savingItems?: Array<keyof Plan>) {
-    const plans = PlanService.fromLocal();
+  addPlan(newPlan: Plan): boolean {
+    const plans = this.fromLocal();
     // 保存されているものがなければ、そのまま保存
     if (!plans) {
-      PlanService.toLocal([newPlan]);
+      this.toLocal([newPlan]);
+      return true;
+    }
+      // 既に存在する場合は、保存せずに終わる
+    if (plans.filter(plan => (plan.id === newPlan.id)).length !== 0) {
+      return false;
+    }
+    plans.unshift(newPlan);
+    this.toLocal(plans);
+    return true;
+  }
+  overwritePlan(newPlan: Plan): void {
+    const plans = this.fromLocal();
+    let isOverwritten = false;
+    const newPlans = plans.map(plan => {
+      if (plan.id !== newPlan.id) {
+        return plan;
+      }
+      isOverwritten = true;
+      return newPlan;
+    });
+    if (!isOverwritten) {
+      throw new Error('上書きできませんでした');
+    }
+    this.toLocal(newPlans);
+  }
+  savePlan(newPlan: Plan, savingItems?: Array<keyof Plan>): void {
+    const plans = this.fromLocal();
+    // 保存されているものがなければ、そのまま保存
+    if (!plans) {
+      this.toLocal([newPlan]);
       return;
     }
     // 保存されているものがあれば、IDの一致するプランの項目を書き換える
@@ -75,12 +111,12 @@ export class PlanService {
       });
       return plan;
     });
-    PlanService.toLocal(newPlans);
+    this.toLocal(newPlans);
   }
 
   private getSamplePlan(): Plan {
     const p = new Plan();
-    p.id = PlanService.getId();
+    p.id = this.getPlanId();
     p.name = '一泊二日の大阪旅行 in 2019/03/03';
     p.theme = PlanTheme.OSAKA;
     p.fromYmd = '2019/02/19';
