@@ -41,7 +41,6 @@ import { MapComponent } from './map.component';
 })
 export class PlanListComponent {
   plans: Plan[];
-  dialogButtonName: string;
 
   constructor(
     private navi: OnsNavigator,
@@ -53,9 +52,21 @@ export class PlanListComponent {
   toDetail(plan: Plan) {
     this.navi.element.pushPage(PlanDetailComponent, { data: plan });
   }
-
   createPlan() {
-    this.dialogButtonName = 'プラン作成';
+    ons.openActionSheet({
+      title: 'プラン作成',
+      cancelable: true,
+      buttons: [ '新しいプランを作成', '共有されたプランから作成', { label: 'キャンセル', icon: 'md-close' } ],
+      callback: (type: number) => {
+        if (type === 0) {
+          this.createNewPlan();
+        } else if (type === 1) {
+          this.createSharedPlan();
+        }
+      }
+    });
+  }
+  createNewPlan() {
     ons.notification.prompt({
       cancelable: true,
       title: '',
@@ -63,9 +74,45 @@ export class PlanListComponent {
       buttonLabel: 'OK',
       callback: (name: string) => {
         if (name) {
-          this.planService
-            .createPlan(name, PlanTheme.CAFE)
-            .then(p => this.plans.push(p));
+          this.planService.createNewPlan(name)
+            .then(p => {
+              if (!this.planService.addPlan(p)) {
+                throw new Error('プラン追加に失敗しました');
+              }
+              this.plans.unshift(p);
+            });
+        }
+      }
+    });
+  }
+  createSharedPlan() {
+    ons.notification.prompt({
+      cancelable: true,
+      title: '',
+      message: '共有IDを入力してください',
+      buttonLabel: 'OK',
+      callback: (sharedId: string) => {
+        if (sharedId) {
+          this.planService.createSharedPlan(sharedId)
+            .then(createdPlan => {
+              // 追加できる場合は普通に追加する
+              if (this.planService.addPlan(createdPlan)) {
+                this.plans.unshift(createdPlan);
+                return;
+              }
+              // 追加できない場合は確認してから更新する
+              ons.notification.confirm({
+                message: '共有されたプランを更新してよろしいですか？',
+                cancelable: true,
+                callback: (i: number) => {
+                  if (i === 1) {
+                    this.planService.overwritePlan(createdPlan);
+                    this.plans = this.plans.map(p => (p.id === createdPlan.id) ? createdPlan : p);
+                  }
+                }
+              });
+            })
+            .catch(e => ons.notification.alert({ title: '', message: e }));
         }
       }
     });

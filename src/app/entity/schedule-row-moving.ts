@@ -8,7 +8,7 @@ export class ScheduleRowMoving implements ScheduleRow {
   interval = '00:00';
   viechleType = ViechleType.WALK;
 
-  static desrialize(raw: any) {
+  static parse(raw: any) {
     raw.isMoving = true;
     raw.getIntervalLabel = new ScheduleRowMoving().getIntervalLabel;
     return raw;

@@ -10,6 +10,7 @@ import { PlanTheme } from '../entity/plan-theme';
 import { EnumUtil } from '../util/enum.util';
 import { EditModeService } from '../service/edit-mode.service';
 import { PlanService } from '../service/plan.service';
+import { ShareService } from '../service/share.service';
 
 @Component({
   selector: 'ons-page[page]',
@@ -143,6 +144,7 @@ export class PlanDetailComponent {
 
   constructor(
     private planService: PlanService,
+    private shareService: ShareService,
     private enumUtil: EnumUtil,
     params: Params,
   ) {
@@ -204,6 +206,14 @@ export class PlanDetailComponent {
     });
   }
   share() {
-    
+    this.shareService.sharePlan(this.plan)
+      .then(sharedId => {
+        ons.notification.prompt({ title: '共有コード', message: '以下のコードをコピーして<br>共有したい人に伝えてください<br><br>' })
+          .then(element => console.log(element));
+        const input = document.querySelector('.alert-dialog .text-input')
+        input.setAttribute('style', 'text-align: center;');
+        input.setAttribute('value', sharedId);
+      })
+      .catch(e => ons.notification.alert({ title: '', message: 'サーバ接続に失敗しました' }));
   }
 }
