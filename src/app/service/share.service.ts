@@ -9,16 +9,17 @@ export class ShareService {
     private afs: AngularFirestore
   ) {}
 
-  addPlan(plan: Plan): Promise<void> {
+  sharePlan(plan: Plan): Promise<string> {
     const localStorageId = 'sharedId:' + plan.id;
     const sharedId = localStorage.getItem(localStorageId);
     if (sharedId) {
-      return this.afs.collection('plans').doc(sharedId).update({ data: JSON.stringify(plan) });
+      return this.afs.collection('plans').doc(sharedId).update({ data: JSON.stringify(plan) })
+        .then(() => sharedId);
     }
     return this.afs.collection('plans').add({ data: JSON.stringify(plan) })
       .then(docRef => {
         localStorage.setItem(localStorageId, docRef.id);
-        console.log(docRef);
+        return docRef.id;
       });
   }
 }

@@ -206,6 +206,14 @@ export class PlanDetailComponent {
     });
   }
   share() {
-    this.shareService.addPlan(this.plan);
+    this.shareService.sharePlan(this.plan)
+      .then(sharedId => {
+        ons.notification.prompt({ title: '共有コード', message: '以下のコードをコピーして<br>共有したい人に伝えてください<br><br>' })
+          .then(element => console.log(element));
+        const input = document.querySelector('.alert-dialog .text-input')
+        input.setAttribute('style', 'text-align: center;');
+        input.setAttribute('value', sharedId);
+      })
+      .catch(e => ons.notification.alert({ title: '', message: 'サーバ接続に失敗しました' }));
   }
 }
