@@ -8,7 +8,7 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
 import { PlanTheme } from '../entity/plan-theme';
 import { EnumUtil } from '../util/enum.util';
-import { EditModeService } from '../service/edit-mode.service';
+import { EditModeUtil } from '../util/edit-mode.util';
 import { PlanService } from '../service/plan.service';
 import { ShareService } from '../service/share.service';
 
@@ -87,7 +87,10 @@ import { ShareService } from '../service/share.service';
                 <div *ngIf="schedulesEdit.on" class="pencil check" (click)="schedulesEdit.toggle()">
                   <i class="fas fa-check-square"></i>
                 </div>
-                <div class="title">{{schedule.name}}</div>
+                <div [style.display]="schedulesEdit.off ? 'block' : 'none'" class="title">{{schedule.name}}</div>
+                <div [style.display]="schedulesEdit.on ? 'block' : 'none'" class="title">
+                  <ons-input type="text" modifier="material underbar" [(ngModel)]="schedule.name"></ons-input>
+                </div>
                 <div class="content">
                   <ons-list class="schedule-list">
                     <div *ngFor="let row of schedule.rows; let i = index">
@@ -128,16 +131,15 @@ import { ShareService } from '../service/share.service';
     '.add-schedule { background-color: #f99; color: #fff; text-align: center; }',
     '.add-schedule > i { margin-top: 0.26em; }',
     '.schedule-list { background-position: top; }', // 底部のボーダーを消す
-  ],
-  providers: [EditModeService]
+  ]
 })
 export class PlanDetailComponent {
   @ViewChild('themes') themesRef: ElementRef;
   @ViewChild('schedules') schedulesRef: ElementRef;
-  headEdit = new EditModeService(this.planService);
-  baggageEdit = new EditModeService(this.planService);
-  schedulesEdit = new EditModeService(this.planService);
-  planThemes = this.enumUtil.indexes(PlanTheme);
+  headEdit: EditModeUtil;
+  baggageEdit: EditModeUtil;
+  schedulesEdit: EditModeUtil;
+  planThemes = EnumUtil.indexes(PlanTheme);
   plan: Plan;
   themesInitIdx = 0;
   scheduleIdx = 0;
@@ -145,13 +147,12 @@ export class PlanDetailComponent {
   constructor(
     private planService: PlanService,
     private shareService: ShareService,
-    private enumUtil: EnumUtil,
     params: Params,
   ) {
     this.plan = params.data;
-    this.headEdit.setSavingItem(this.plan, 'theme', 'name');
-    this.baggageEdit.setSavingItem(this.plan, 'baggage');
-    this.schedulesEdit.setSavingItem(this.plan, 'schedules');
+    this.headEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['theme', 'name']));
+    this.baggageEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['baggage']));
+    this.schedulesEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['schedules']));
   }
 
   selectTheme() {
@@ -210,7 +211,7 @@ export class PlanDetailComponent {
       .then(sharedId => {
         ons.notification.prompt({ title: '共有コード', message: '以下のコードをコピーして<br>共有したい人に伝えてください<br><br>' })
           .then(element => console.log(element));
-        const input = document.querySelector('.alert-dialog .text-input')
+        const input = document.querySelector('.alert-dialog .text-input');
         input.setAttribute('style', 'text-align: center;');
         input.setAttribute('value', sharedId);
       })
