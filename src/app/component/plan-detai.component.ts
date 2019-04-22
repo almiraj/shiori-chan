@@ -53,7 +53,7 @@ import { ShareService } from '../service/share.service';
           </div>
         </ons-card>
         <ons-card>
-          <app-map-direction shceRowPlace="plan[0].schedules[0]"></app-map-direction>
+          <app-map-direction shcedRowPlace="plan[0].schedules[0]"></app-map-direction>
         </ons-card>
         <ons-card #buggage>
           <div *ngIf="baggageEdit.off" class="pencil" (click)="baggageEdit.toggle()">
@@ -173,9 +173,9 @@ export class PlanDetailComponent {
       message: 'スケジュール名を入力してください',
       callback: (name: string) => {
         if (name) {
-          const sche = new Schedule(name);
-          sche.rows.push(new ScheduleRowPlace());
-          const idx = this.plan.schedules.push(sche) - 1;
+          const sched = new Schedule(name);
+          sched.rows.push(new ScheduleRowPlace());
+          const idx = this.plan.schedules.push(sched) - 1;
           timer(0).subscribe(() => this.swipeSchedule(idx)); // 追加したスケジュールを表示する
         }
       }

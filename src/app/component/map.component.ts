@@ -35,7 +35,7 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
   `]
 })
 export class MapComponent implements OnInit {
-  shceRowPlace: ScheduleRowPlace;
+  shcedRowPlace: ScheduleRowPlace;
   readOnly: boolean;
   latitude: number;
   longitude: number;
@@ -50,15 +50,15 @@ export class MapComponent implements OnInit {
     private ngZone: NgZone,
     params: Params
   ) {
-    this.shceRowPlace = params.data.shceRowPlace;
+    this.shcedRowPlace = params.data.shcedRowPlace;
     this.readOnly = params.data.readOnly;
   }
 
   ngOnInit() {
     // set google maps defaults
-    if (this.shceRowPlace.lat) {
-      this.latitude = this.shceRowPlace.lat;
-      this.longitude = this.shceRowPlace.lng;
+    if (this.shcedRowPlace.lat) {
+      this.latitude = this.shcedRowPlace.lat;
+      this.longitude = this.shcedRowPlace.lng;
     } else if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitude = position.coords.latitude;
@@ -76,8 +76,8 @@ export class MapComponent implements OnInit {
     // load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
       const autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {});
-      if (this.shceRowPlace.address) {
-        this.searchElementRef.nativeElement.value = this.shceRowPlace.address;
+      if (this.shcedRowPlace.address) {
+        this.searchElementRef.nativeElement.value = this.shcedRowPlace.address;
       }
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
@@ -90,9 +90,9 @@ export class MapComponent implements OnInit {
           }
 
           // set latitude, longitude and zoom
-          this.shceRowPlace.address = this.searchElementRef.nativeElement.value = place.name;
-          this.latitude = this.shceRowPlace.lat = place.geometry.location.lat();
-          this.longitude = this.shceRowPlace.lng = place.geometry.location.lng();
+          this.shcedRowPlace.address = this.searchElementRef.nativeElement.value = place.name;
+          this.latitude = this.shcedRowPlace.lat = place.geometry.location.lat();
+          this.longitude = this.shcedRowPlace.lng = place.geometry.location.lng();
           this.zoom = 17;
         });
       });
@@ -104,11 +104,11 @@ export class MapComponent implements OnInit {
     if (this.readOnly) {
       return;
     }
-    this.shceRowPlace.address = this.searchElementRef.nativeElement.value = '';
-    this.shceRowPlace.lat = event.coords.lat;
-    this.shceRowPlace.lng = event.coords.lng;
+    this.shcedRowPlace.address = this.searchElementRef.nativeElement.value = '';
+    this.shcedRowPlace.lat = event.coords.lat;
+    this.shcedRowPlace.lng = event.coords.lng;
 
-    this.latitude = this.shceRowPlace.lat;
-    this.longitude = this.shceRowPlace.lng;
+    this.latitude = this.shcedRowPlace.lat;
+    this.longitude = this.shcedRowPlace.lng;
 }
 }
