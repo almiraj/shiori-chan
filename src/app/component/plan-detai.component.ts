@@ -123,6 +123,7 @@ import { ShareService } from '../service/share.service';
     '.buggage-area textarea { width: 100%; height: 100%; margin: 0; padding: 0; border-width: 0 4px 0 0; border-color: #ff1a33; }',
     '.buggage-area textarea { font-size: 14px; line-height: 1.4em; }',
     '.buggage-area textarea { font-family: -apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif; }',
+    '.buggage-area .pre { min-height: 2.8em; }',
     '.pre { white-space: pre-wrap; }',
     'ons-carousel { margin-bottom: 1em; }',
     '#schedules-radio-area { text-align: center; }',
