@@ -6,6 +6,13 @@ export class EditModeUtil {
     private onSaved: Function
   ) {}
 
+  get onDisplay() {
+    return this.on ? 'block' : 'none';
+  }
+  get offDisplay() {
+    return this.off ? 'block' : 'none';
+  }
+
   toggle() {
     this.on = !this.on;
     this.off = !this.off;

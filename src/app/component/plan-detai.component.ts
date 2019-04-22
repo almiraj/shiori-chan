@@ -63,8 +63,8 @@ import { ShareService } from '../service/share.service';
             <i class="fas fa-check-square"></i>
           </div>
           <div class="title">持ち物・メモ書き</div>
-          <div class="content toggleArea">
-            <div *ngIf="baggageEdit.on" style="position: absolute; width: 100%; height: 100%;">
+          <div class="content buggage-area">
+            <div *ngIf="baggageEdit.on" class="buggage-area-abs">
               <textarea [(ngModel)]="plan.baggage"></textarea>
             </div>
             <div class="content pre">{{plan.baggage}}</div>
@@ -87,8 +87,8 @@ import { ShareService } from '../service/share.service';
                 <div *ngIf="schedulesEdit.on" class="pencil check" (click)="schedulesEdit.toggle()">
                   <i class="fas fa-check-square"></i>
                 </div>
-                <div [style.display]="schedulesEdit.off ? 'block' : 'none'" class="title">{{schedule.name}}</div>
-                <div [style.display]="schedulesEdit.on ? 'block' : 'none'" class="title">
+                <div [style.display]="schedulesEdit.offDisplay" class="title">{{schedule.name}}</div>
+                <div [style.display]="schedulesEdit.onDisplay" class="title">
                   <ons-input type="text" modifier="material underbar" [(ngModel)]="schedule.name"></ons-input>
                 </div>
                 <div class="content">
@@ -118,9 +118,11 @@ import { ShareService } from '../service/share.service';
     '.pencil { position: absolute; top: 6px; right: 6px; font-size: 1.2em; color: #0076ff; z-index: 100; }',
     '.check { color: #ff1a33; }',
     '#planNameInput { width: 100%; }',
-    '.toggleArea { position: relative; }',
-    '.toggleArea textarea { width: 100%; height: 100%; margin: 0; padding: 0; border-width: 0 4px 0 0; border-color: #ff1a33; }',
-    '.toggleArea textarea { font-family: -apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif; }',
+    '.buggage-area { position: relative; }',
+    '.buggage-area .buggage-area-abs { position: absolute; width: 100%; height: 100%; }',
+    '.buggage-area textarea { width: 100%; height: 100%; margin: 0; padding: 0; border-width: 0 4px 0 0; border-color: #ff1a33; }',
+    '.buggage-area textarea { font-size: 14px; line-height: 1.4em; }',
+    '.buggage-area textarea { font-family: -apple-system, "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", sans-serif; }',
     '.pre { white-space: pre-wrap; }',
     'ons-carousel { margin-bottom: 1em; }',
     '#schedules-radio-area { text-align: center; }',
