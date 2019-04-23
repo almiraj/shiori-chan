@@ -114,6 +114,9 @@ export class PlanService {
     });
     this.toLocal(newPlans);
   }
+  saveAllPlan(plans: Plan[]) {
+    this.toLocal(plans);
+  }
 
   private getSamplePlan(): Plan {
     const p = new Plan();

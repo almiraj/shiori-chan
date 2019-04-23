@@ -66,12 +66,15 @@ export class MapDirectionInnerComponent implements OnInit {
       <app-map-inner-direction [schedule]="schedule"></app-map-inner-direction>
     </agm-map>
     <div *ngIf="!existsRoutes" id="empty-map">
-      スケジュールに位置情報を2つ以上登録すると、ここに旅のルートが表示されます。
+      <div>
+        スケジュールに位置情報を<br>2つ以上登録すると、<br>ここに旅のルートが表示されます。
+      </div>
     </div>
   `,
   styles: [`
     agm-map, #empty-map { height: 60vh; }
-    #empty-map { text-align: center; padding-top: 29vh; }
+    #empty-map { text-align: center; border: #ccc solid 2px; }
+    #empty-map div { margin-top: 25vh; }
   `]
 })
 export class MapDirectionComponent implements OnInit {

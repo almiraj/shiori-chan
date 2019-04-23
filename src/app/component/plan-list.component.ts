@@ -1,4 +1,4 @@
-import { Component, OnsNavigator } from 'ngx-onsenui';
+import { Component, OnsNavigator, Output, EventEmitter } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 
 import { PlanDetailComponent } from './plan-detai.component';
@@ -48,7 +48,14 @@ export class PlanListComponent {
   }
 
   toDetail(plan: Plan) {
-    this.navi.element.pushPage(PlanDetailComponent, { data: plan });
+    const emitter = new EventEmitter<void>();
+    emitter.subscribe((event: string) => {
+      if (event === 'deletePlan') {
+        this.plans = this.plans.filter(p => p.id !== plan.id);
+        this.planService.saveAllPlan(this.plans);
+      }
+    })
+    this.navi.element.pushPage(PlanDetailComponent, { data: { plan: plan, emitter: emitter } });
   }
   createPlan() {
     ons.openActionSheet({

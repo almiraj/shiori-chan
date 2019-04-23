@@ -1,4 +1,4 @@
-import { Component, Params, ViewChild, ElementRef, Inject } from 'ngx-onsenui';
+import { Component, Params, ViewChild, ElementRef, Inject, OnsNavigator } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 import { timer } from 'rxjs';
 
@@ -11,6 +11,7 @@ import { EnumUtil } from '../util/enum.util';
 import { EditModeUtil } from '../util/edit-mode.util';
 import { PlanService } from '../service/plan.service';
 import { ShareService } from '../service/share.service';
+import { EventEmitter } from 'protractor';
 
 @Component({
   selector: 'ons-page[page]',
@@ -101,10 +102,18 @@ import { ShareService } from '../service/share.service';
                     </div>
                   </ons-list>
                 </div>
-                <app-map-direction [schedule]="schedule"></app-map-direction>
+                <div *ngIf="schedulesEdit.off" class="map-area">
+                  <app-map-direction [schedule]="schedule"></app-map-direction>
+                </div>
+                <div *ngIf="schedulesEdit.on" class="schedule-delete-area">
+                  <ons-button modifier="cta" (click)="deleteSchedule(i)">このスケジュールを削除</ons-button>
+                </div>
               </ons-card>
             </ons-carousel-item>
           </ons-carousel>
+          <div class="plan-delete-area">
+            <ons-button modifier="cta" (click)="deletePlan()">このプランを削除</ons-button>
+          </div>
         </div>
       </div>
     </ons-page>
@@ -132,6 +141,10 @@ import { ShareService } from '../service/share.service';
     '.add-schedule { background-color: #f99; color: #fff; text-align: center; }',
     '.add-schedule > i { margin-top: 0.26em; }',
     '.schedule-list { background-position: top; }', // 底部のボーダーを消す
+    '.map-area { margin-top: 2em; }',
+    '.schedule-delete-area { text-align: center; margin-top: 2em; }',
+    '.plan-delete-area { text-align: center; margin: 2em; }',
+    '.plan-delete-area ons-button { background-color: #bf271f; }',
   ]
 })
 export class PlanDetailComponent {
@@ -141,16 +154,19 @@ export class PlanDetailComponent {
   baggageEdit: EditModeUtil;
   schedulesEdit: EditModeUtil;
   planThemes = EnumUtil.indexes(PlanTheme);
+  emitter: EventEmitter;
   plan: Plan;
   themesInitIdx = 0;
   scheduleIdx = 0;
 
   constructor(
+    private navi: OnsNavigator,
     private planService: PlanService,
     private shareService: ShareService,
     params: Params,
   ) {
-    this.plan = params.data;
+    this.plan = params.data.plan;
+    this.emitter = params.data.emitter;
     this.headEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['theme', 'name']));
     this.baggageEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['baggage']));
     this.schedulesEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['schedules']));
@@ -218,5 +234,24 @@ export class PlanDetailComponent {
         input.onfocus = () => input.select();
       })
       .catch(e => ons.notification.alert({ title: '', message: 'サーバ接続に失敗しました' }));
+  }
+  deleteSchedule(deleteIdx: number) {
+    ons.notification.confirm({ message: 'このスケジュールを削除します', cancelable: true })
+      .then(i => {
+        if (Number(i) === 1) {
+          this.plan.schedules = this.plan.schedules.filter((val, idx) => idx !== deleteIdx);
+          ons.notification.alert({ title: '', message: 'スケジュールを削除しました' });
+        }
+      });
+  }
+  deletePlan() {
+    ons.notification.confirm({ message: '本当にこのプランを削除してもよろしいですか？', cancelable: true })
+      .then(i => {
+        if (Number(i) === 1) {
+          this.emitter.emit('deletePlan');
+          ons.notification.alert({ title: '', message: 'このプランは削除されました' })
+            .then(() => this.navi.element.popPage());
+        }
+      });
   }
 }
