@@ -1,4 +1,5 @@
 import { ScheduleRow } from './schedule-row';
+import { LatLng } from './lat-lng';
 
 export class ScheduleRowPlace implements ScheduleRow {
   isMoving = false;
@@ -8,13 +9,11 @@ export class ScheduleRowPlace implements ScheduleRow {
   fromTime: string;
   toTime: string;
   address: string;
-  lat: number;
-  lng: number;
+  latLng: LatLng;
 
   static parse(raw: any) {
     raw.isMoving = false;
-    raw.lat = Number(raw.lat);
-    raw.lng = Number(raw.lng);
+    raw.latLng = LatLng.parse(raw.latLng);
     return raw;
   }
 }

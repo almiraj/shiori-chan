@@ -52,9 +52,6 @@ import { ShareService } from '../service/share.service';
             <ons-input type="text" id="planNameInput" modifier="material underbar" [(ngModel)]="plan.name"></ons-input>
           </div>
         </ons-card>
-        <ons-card>
-          <app-map-direction shcedRowPlace="plan[0].schedules[0]"></app-map-direction>
-        </ons-card>
         <ons-card #buggage>
           <div *ngIf="baggageEdit.off" class="pencil" (click)="baggageEdit.toggle()">
             <i class="fas fa-pencil-alt"></i>
@@ -104,6 +101,7 @@ import { ShareService } from '../service/share.service';
                     </div>
                   </ons-list>
                 </div>
+                <app-map-direction [schedule]="schedule"></app-map-direction>
               </ons-card>
             </ons-carousel-item>
           </ons-carousel>

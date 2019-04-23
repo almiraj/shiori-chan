@@ -3,6 +3,7 @@ import * as ons from 'onsenui';
 import { FormControl } from '@angular/forms';
 import { MapsAPILoader } from '@agm/core';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
+import { LatLng } from '../entity/lat-lng';
 
 @Component({
   selector: 'ons-page[page]',
@@ -37,10 +38,10 @@ import { ScheduleRowPlace } from '../entity/schedule-row-place';
 export class MapComponent implements OnInit {
   shcedRowPlace: ScheduleRowPlace;
   readOnly: boolean;
-  latitude: number;
-  longitude: number;
   searchControl: FormControl;
-  zoom = 17;
+  latitude = 34.6938877; // 大阪市役所
+  longitude = 135.50192900000002;
+  zoom = 6;
 
   @ViewChild('search')
   public searchElementRef: ElementRef;
@@ -56,18 +57,16 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // set google maps defaults
-    if (this.shcedRowPlace.lat) {
-      this.latitude = this.shcedRowPlace.lat;
-      this.longitude = this.shcedRowPlace.lng;
+    if (this.shcedRowPlace.latLng) {
+      this.latitude = this.shcedRowPlace.latLng.lat;
+      this.longitude = this.shcedRowPlace.latLng.lng;
+      this.zoom = 17;
     } else if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
+        this.zoom = 17;
       });
-    } else {
-      this.latitude = 34.6938877;
-      this.longitude = 135.50192900000002;
-      this.zoom = 6; // 広範囲で表示
     }
 
     // create search FormControl
@@ -90,9 +89,11 @@ export class MapComponent implements OnInit {
           }
 
           // set latitude, longitude and zoom
-          this.shcedRowPlace.address = this.searchElementRef.nativeElement.value = place.name;
-          this.latitude = this.shcedRowPlace.lat = place.geometry.location.lat();
-          this.longitude = this.shcedRowPlace.lng = place.geometry.location.lng();
+          this.searchElementRef.nativeElement.value = place.name;
+          this.latitude = place.geometry.location.lat();
+          this.longitude = place.geometry.location.lng();
+          this.shcedRowPlace.address = place.name;
+          this.shcedRowPlace.latLng = new LatLng(place.geometry.location.lat(), place.geometry.location.lng());
           this.zoom = 17;
         });
       });
@@ -104,11 +105,12 @@ export class MapComponent implements OnInit {
     if (this.readOnly) {
       return;
     }
-    this.shcedRowPlace.address = this.searchElementRef.nativeElement.value = '';
-    this.shcedRowPlace.lat = event.coords.lat;
-    this.shcedRowPlace.lng = event.coords.lng;
 
-    this.latitude = this.shcedRowPlace.lat;
-    this.longitude = this.shcedRowPlace.lng;
-}
+    this.searchElementRef.nativeElement.value = ''; // アンカー変更時はクリア
+    this.latitude = event.coords.lat;
+    this.longitude = event.coords.lng;
+
+    this.shcedRowPlace.address = ''; // アンカー変更時はクリア
+    this.shcedRowPlace.latLng = new LatLng(event.coords.lat, event.coords.lng);
+  }
 }

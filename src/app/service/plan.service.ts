@@ -9,6 +9,7 @@ import { Schedule } from '../entity/schedule';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ViechleType } from '../entity/viechle-type';
+import { LatLng } from '../entity/lat-lng';
 
 @Injectable()
 export class PlanService {
@@ -148,8 +149,7 @@ export class PlanService {
       row.toTime = '09:13';
       row.description = '新大阪駅';
       row.address = '新大阪駅';
-      row.lat = 34.7334658;
-      row.lng = 135.50025470000003;
+      row.latLng = new LatLng(34.7334658, 135.50025470000003);
       return row;
     })());
     p.schedules[0].rows.push((() => {
@@ -168,8 +168,7 @@ export class PlanService {
       row.fromTime = row.toTime = '09:46';
       row.description = 'ユニバーサルシティ駅';
       row.address = 'ユニバーサルシティ駅';
-      row.lat = 34.6678388;
-      row.lng = 135.43855380000002;
+      row.latLng = new LatLng(34.6678388, 135.43855380000002);
       return row;
     })());
 

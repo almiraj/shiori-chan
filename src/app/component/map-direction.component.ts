@@ -3,45 +3,51 @@ import * as ons from 'onsenui';
 import { FormControl } from '@angular/forms';
 import { MapsAPILoader, AgmMap, GoogleMapsAPIWrapper } from '@agm/core';
 import { Plan } from '../entity/plan';
+import { Schedule } from '../entity/schedule';
+import { ScheduleRowPlace } from '../entity/schedule-row-place';
+import { LatLng } from '../entity/lat-lng';
 
 @Component({
   selector: 'app-map-inner-direction',
   template: ''
 })
 export class MapDirectionInnerComponent implements OnInit {
-  _plan: Plan;
-  latitude: number;
-  longitude: number;
-  searchControl: FormControl;
-  zoom = 17;
+  @Input() schedule: Schedule;
 
   constructor(
-    private mapsAPILoader: MapsAPILoader,
     private googleMapsAPIWrapper: GoogleMapsAPIWrapper,
     private ngZone: NgZone,
   ) {}
 
-  @Input()
-  set place(plan: Plan) { this._plan = plan; }
-  get place(): Plan { return this._plan; }
-
   ngOnInit() {
+    const latLngList = this.schedule.getLatLngList();
+    if (latLngList.length < 2) {
+      return;
+    }
+    const origin = latLngList[0].toLocation();
+    const destination = latLngList[latLngList.length - 1].toLocation();
+
+    const waypoints = new Array<google.maps.DirectionsWaypoint>();
+    for (let i = 1; i < latLngList.length - 1; i++) {
+      waypoints.push({ location: latLngList[i].toLocation(), stopover: true });
+    }
+
     this.googleMapsAPIWrapper.getNativeMap().then(map => {
       this.ngZone.run(() => {
-        this.latitude = 41.85;
-        this.longitude = -87.65;
-        this.zoom = 6;
+        // this.latitude = 41.85;
+        // this.longitude = -87.65;
+        // this.zoom = 6;
         const directionsDisplay = new google.maps.DirectionsRenderer();
         directionsDisplay.setMap(<any>map);
 
         const directionsService = new google.maps.DirectionsService();
         directionsService.route({
-          origin: 'Halifax, NS',
-          destination: 'Los Angeles, CA',
-          waypoints: [{ location: 'montreal quebec', stopover: true }, { location: 'chicago, il', stopover: true }],
+          origin: origin,
+          destination: destination,
+          waypoints: waypoints,
           optimizeWaypoints: true,
           travelMode: google.maps.TravelMode.DRIVING
-        }, function(response, status) {
+        }, (response, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
           } else {
@@ -56,64 +62,26 @@ export class MapDirectionInnerComponent implements OnInit {
 @Component({
   selector: 'app-map-direction',
   template: `
-    <agm-map id="gmap" [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
-      <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
-      <app-map-inner-direction></app-map-inner-direction>
+    <agm-map *ngIf="existsRoutes" id="gmap" [scrollwheel]="false">
+      <app-map-inner-direction [schedule]="schedule"></app-map-inner-direction>
     </agm-map>
+    <div *ngIf="!existsRoutes" id="empty-map">
+      スケジュールに位置情報を2つ以上登録すると、ここに旅のルートが表示されます。
+    </div>
   `,
   styles: [`
-    agm-map { height: 200px; z-index: 5000; }
-    #autocomplete { position: absolute; top: 1em; z-index: 2; width: 80%; margin: 0 10%; }
-    #autocomplete input { width: 100%; font-size: 1.2em; opacity: 0.9; border-radius: 6px; padding: 6px; }
+    agm-map, #empty-map { height: 60vh; }
+    #empty-map { text-align: center; padding-top: 29vh; }
   `]
 })
-export class MapDirectionComponent {
-  _plan: Plan;
-  latitude: number;
-  longitude: number;
-  searchControl: FormControl;
-  zoom = 17;
+export class MapDirectionComponent implements OnInit {
+  @Input() schedule: Schedule;
+  existsRoutes = false;
 
-//   constructor(
-//     private mapsAPILoader: MapsAPILoader,
-//     private googleMapsAPIWrapper: GoogleMapsAPIWrapper,
-//     private ngZone: NgZone,
-//   ) {}
-
-  @Input()
-  set place(plan: Plan) { this._plan = plan; }
-  get place(): Plan { return this._plan; }
-
-//   ngOnInit() {
-//     this.googleMapsAPIWrapper.getNativeMap().then(map => {
-// console.log(map);
-//     });
-//     this.mapsAPILoader.load().then(() => {
-//       this.ngZone.run(() => {
-//     this.googleMapsAPIWrapper.getNativeMap().then(map => {
-// console.log(map);
-//     });
-//         this.latitude = 41.85;
-//         this.longitude = -87.65;
-//         this.zoom = 6;
-//         const directionsDisplay = new google.maps.DirectionsRenderer();
-//         // directionsDisplay.setMap(new google.maps.Map(<any>document.getElementsByClassName('gm-style')[0]));
-
-//         const directionsService = new google.maps.DirectionsService();
-//         directionsService.route({
-//           origin: 'Halifax, NS',
-//           destination: 'Los Angeles, CA',
-//           waypoints: [{ location: 'montreal quebec', stopover: true }, { location: 'chicago, il', stopover: true }],
-//           optimizeWaypoints: true,
-//           travelMode: google.maps.TravelMode.DRIVING
-//         }, function(response, status) {
-//           if (status === google.maps.DirectionsStatus.OK) {
-//             directionsDisplay.setDirections(response);
-//           } else {
-//             window.alert('Directions request failed due to ' + status);
-//           }
-//         });
-//       });
-//     });
-//   }
+  ngOnInit() {
+    const latLngList = this.schedule.getLatLngList();
+    if (latLngList.length >= 2) {
+      this.existsRoutes = true;
+    }
+  }
 }

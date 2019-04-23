@@ -83,7 +83,7 @@ import { MapComponent } from './map.component';
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
         <div *ngIf="!isEdit">
-          <div *ngIf="shcedRowPlace && shcedRowPlace.lat" class="right-icon">
+          <div *ngIf="shcedRowPlace && shcedRowPlace.latLng" class="right-icon">
             <i class="fas fa-map-marked-alt link-color" (click)="toMap(shcedRowPlace, true)"></i>
           </div>
           <div class="right-icon" *ngIf="row.url">
