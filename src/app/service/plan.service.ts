@@ -61,9 +61,9 @@ export class PlanService {
       return Promise.resolve(plans);
     }
     // まだプランが保存されてなければサンプルを保存しつつ返却する
-    const samplePlan = this.getSamplePlan();
-    this.savePlan(samplePlan);
-    return Promise.resolve([samplePlan]);
+    const samplePlans = this.getSamplePlans();
+    this.saveAllPlan(samplePlans);
+    return Promise.resolve(samplePlans);
   }
   addPlan(newPlan: Plan): boolean {
     const plans = this.fromLocal();
@@ -118,104 +118,193 @@ export class PlanService {
     this.toLocal(plans);
   }
 
-  private getSamplePlan(): Plan {
-    const p = new Plan();
-    p.id = this.getPlanId();
-    p.name = '一泊二日の大阪旅行 in 2019/03/03';
-    p.theme = PlanTheme.OSAKA;
-    p.fromYmd = '2019/02/19';
-    p.baggage = 'くつした\nシャンプー\n折り畳み傘';
-
-    p.schedules.push(new Schedule('1日目'));
-    p.schedules[0].rows.push((() => {
-      const row = new ScheduleRowPlace();
-      row.fromTime = row.toTime = '07:00';
-      row.description = '起床';
-      return row;
-    })());
-    p.schedules[0].rows.push((() => {
-      const row = new ScheduleRowPlace();
-      row.fromTime = row.toTime = '08:30';
-      row.description = '家を出る';
-      row.memo = '持ち物を忘れないように\n最悪でも11:15には出ること';
-      return row;
-    })());
-    p.schedules[0].rows.push((() => {
-      const row = new ScheduleRowMoving();
-      row.viechleType = ViechleType.WALK;
-      row.interval = '01:10';
-      return row;
-    })());
-    p.schedules[0].rows.push((() => {
-      const row = new ScheduleRowPlace();
-      row.fromTime = row.toTime = '09:10';
-      row.toTime = '09:13';
-      row.description = '新大阪駅';
-      row.address = '新大阪駅';
-      row.latLng = new LatLng(34.7334658, 135.50025470000003);
-      return row;
-    })());
-    p.schedules[0].rows.push((() => {
-      const row = new ScheduleRowMoving();
-      row.viechleType = ViechleType.TRAIN;
-      row.memo = '大阪駅で乗り換え';
-      row.interval = '00:15';
-      row.viechleType = ViechleType.TRAIN;
-      row.url = 'https://transit.yahoo.co.jp/search/result?flatlon=&from=%E6%96%B0%E5%A4%A7%E9%98%AA&tlatlon='
-        + '&to=USJ&viacode=&via=&viacode=&via=&viacode=&via=&y=2019&m=02&d=21&hh=09&m2=3&m1=0&type=1&ticket='
-        + 'ic&expkind=1&ws=3&s=0&al=1&shin=1&ex=1&hb=1&lb=1&sr=1&kw=USJ';
-      return row;
-    })());
-    p.schedules[0].rows.push((() => {
-      const row = new ScheduleRowPlace();
-      row.fromTime = row.toTime = '09:46';
-      row.description = 'ユニバーサルシティ駅';
-      row.address = 'ユニバーサルシティ駅';
-      row.latLng = new LatLng(34.6678388, 135.43855380000002);
-      return row;
-    })());
-
-    p.schedules.push(new Schedule('1日目 (雨用プラン)'));
-    p.schedules[1].rows.push((() => {
-      const row = new ScheduleRowPlace();
-      row.fromTime = row.toTime = '09:30';
-      row.description = '起床';
-      return row;
-    })());
-    p.schedules[1].rows.push((() => {
-      const row = new ScheduleRowPlace();
-      row.fromTime = row.toTime = '11:00';
-      row.description = '家を出る';
-      return row;
-    })());
-    p.schedules[1].rows.push((() => {
-      const row = new ScheduleRowMoving();
-      row.viechleType = ViechleType.WALK;
-      row.interval = '20分';
-      return row;
-    })());
-    p.schedules[1].rows.push((() => {
-      const row = new ScheduleRowPlace();
-      row.fromTime = row.toTime = '11:20';
-      row.description = '小川町駅';
-      return row;
-    })());
-    p.schedules[1].rows.push((() => {
-      const row = new ScheduleRowMoving();
-      row.url = 'https://transit.yahoo.co.jp/search/result?flatlon=&from=%E5%B0%8F%E5%B7%9D%E7%94%BA&tlatlon='
-        + '&to=%E6%96%B0%E5%AE%BF&viacode=&via=&viacode=&via=&viacode=&via=&y=2019&m=02&d=19&hh=15&m2=3&m1=0&'
-        + 'type=1&ticket=ic&expkind=1&ws=3&row=0&al=1&shin=1&ex=1&hb=1&lb=1&sr=1&kw=%E6%96%B0%E5%AE%BF';
-      row.viechleType = ViechleType.TRAIN;
-      row.interval = '20分';
-      return row;
-    })());
-    p.schedules[1].rows.push((() => {
-      const row = new ScheduleRowPlace();
-      row.fromTime = row.toTime = '11:30';
-      row.description = '新宿駅';
-      return row;
-    })());
-
-    return p;
+  private getSamplePlans(): Array<Plan> {
+    return [Plan.parse({
+      'schedules': [
+        {
+          'name': '1日目',
+          'rows': [
+            {
+              'isMoving': false,
+              'description': '起床',
+              'toTime': '07:00',
+              'fromTime': '07:00'
+            },
+            {
+              'isMoving': false,
+              'description': '家を出る',
+              'toTime': '08:30',
+              'fromTime': '08:30',
+              'memo': '持ち物を忘れないように\n最悪でも11:15には出ること',
+              'latLng': { 'lat': 34.88797414008486, 'lng': 135.4159649680705 },
+              'address': ''
+            },
+            { 'isMoving': true, 'interval': '00:10', 'viechleType': 'WALK' },
+            {
+              'isMoving': false,
+              'description': '畦野駅',
+              'address': '畦野駅',
+              'latLng': { 'lat': 34.88506580000001, 'lng': 135.4156395 },
+              'fromTime': '08:40',
+              'toTime': '08:40'
+            },
+            {
+              'isMoving': true,
+              'interval': '01:15',
+              'viechleType': 'TRAIN',
+              'memo': '川西能勢口で乗り換え'
+            },
+            {
+              'isMoving': false,
+              'description': 'ユニバーサルシティ駅',
+              'toTime': '09:45',
+              'fromTime': '09:45',
+              'address': 'ユニバーサルシティ駅',
+              'latLng': { 'lat': 34.6678388, 'lng': 135.43855380000002 }
+            },
+            {
+              'isMoving': true,
+              'interval': '00:10',
+              'viechleType': 'WALK',
+              'memo': ''
+            },
+            {
+              'isMoving': false,
+              'description': 'ユニバーサルスタジオ',
+              'address': 'ユニバーサル・スタジオ・ジャパン',
+              'latLng': { 'lat': 34.665442, 'lng': 135.4323382 },
+              'fromTime': '10:00',
+              'toTime': '20:00',
+              'memo': '12:00に昼ご飯\n18:00に夕ご飯'
+            },
+            { 'isMoving': true, 'interval': '00:10', 'viechleType': 'WALK' },
+            {
+              'isMoving': false,
+              'description': 'ユニバーサルポート',
+              'address': 'ホテル ユニバーサル ポート',
+              'latLng': { 'lat': 34.666121, 'lng': 135.43775600000004 },
+              'fromTime': '20:15',
+              'toTime': '23:00',
+              'memo': ''
+            },
+            {
+              'isMoving': false,
+              'description': '就寝',
+              'fromTime': '23:00',
+              'toTime': '23:00'
+            }
+          ]
+        },
+        {
+          'name': '2日目',
+          'rows': [
+            {
+              'isMoving': false,
+              'description': '朝ご飯',
+              'toTime': '07:30',
+              'fromTime': '07:30',
+              'memo': 'ビュッフェ形式'
+            },
+            {
+              'isMoving': false,
+              'description': 'ホテルを出る',
+              'toTime': '09:20',
+              'fromTime': '09:20',
+              'latLng': { 'lat': 34.666121, 'lng': 135.43775600000004 },
+              'address': 'ホテル ユニバーサル ポート'
+            },
+            { 'isMoving': true, 'interval': '00:10', 'viechleType': 'WALK' },
+            {
+              'isMoving': false,
+              'description': 'ユニバーサルシティ駅',
+              'toTime': '09:30',
+              'fromTime': '09:30',
+              'latLng': { 'lat': 34.6678388, 'lng': 135.43855380000002 },
+              'address': 'ユニバーサルシティ駅'
+            },
+            {
+              'isMoving': true,
+              'interval': '00:30',
+              'viechleType': 'TRAIN'
+            },
+            {
+              'isMoving': false,
+              'description': 'なんば駅',
+              'toTime': '10:00',
+              'fromTime': '10:00',
+              'latLng': { 'lat': 34.6670718, 'lng': 135.5003607 },
+              'address': 'なんば駅',
+              'memo': 'ちょっと散策'
+            },
+            {
+              'isMoving': false,
+              'description': 'グランド花月',
+              'fromTime': '11:00',
+              'toTime': '14:00',
+              'memo': '終わったらたこ焼き食べる',
+              'address': 'よしもと なんばグランド花月 劇場（ＮＧＫ）',
+              'latLng': { 'lat': 34.66498689999999, 'lng': 135.5036556 }
+            },
+            { 'isMoving': true, 'interval': '00:17', 'viechleType': 'TRAIN' },
+            {
+              'isMoving': false,
+              'description': '森ノ宮駅',
+              'address': '森ノ宮駅',
+              'latLng': { 'lat': 34.6817307, 'lng': 135.5333561 },
+              'fromTime': '14:17',
+              'toTime': '14:17'
+            },
+            {
+              'isMoving': false,
+              'description': '大阪城',
+              'address': '大阪城',
+              'latLng': { 'lat': 34.6873333, 'lng': 135.5259555 },
+              'fromTime': '14:30',
+              'toTime': '16:30',
+              'memo': '金の茶室を見る'
+            },
+            {
+              'isMoving': false,
+              'description': '森ノ宮駅',
+              'address': '森ノ宮駅',
+              'latLng': { 'lat': 34.6817307, 'lng': 135.5333561 },
+              'fromTime': '16:40',
+              'toTime': '16:40'
+            },
+            { 'isMoving': true, 'interval': '00:04', 'viechleType': 'TRAIN' },
+            {
+              'isMoving': false,
+              'description': '京橋',
+              'memo': '散策して鉄板焼き食べる',
+              'fromTime': '16:44',
+              'toTime': '19:00'
+            },
+            { 'isMoving': true, 'interval': '01:05', 'viechleType': 'TRAIN' },
+            {
+              'isMoving': false,
+              'description': '畦野駅',
+              'fromTime': '20:05',
+              'toTime': '20:05',
+              'address': '畦野駅',
+              'latLng': { 'lat': 34.88506580000001, 'lng': 135.4156395 }
+            },
+            { 'isMoving': true, 'interval': '00:10', 'viechleType': 'WALK' },
+            {
+              'isMoving': false,
+              'description': '帰宅',
+              'fromTime': '20:10',
+              'toTime': '20:10',
+              'address': '',
+              'latLng': { 'lat': 34.8881717142625, 'lng': 135.41593990740967 }
+            }
+          ]
+        }
+      ],
+      'id': 'e1a95c28-d3bf-49b6-a2a1-ce73264e66fb:c636042b-5e17-4dac-a11d-45a196a04938',
+      'name': '2019/03/03 一泊二日の大阪旅行',
+      'theme': 4,
+      'fromYmd': '2019/02/19',
+      'baggage': 'くつした\nシャンプー\n折り畳み傘'
+    })];
   }
 }

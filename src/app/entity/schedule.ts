@@ -11,7 +11,7 @@ export class Schedule {
 
   static parse(raw: any) {
     raw.rows.map((row: any) => {
-      return (row.isMoving === 'true') ? ScheduleRowMoving.parse(row) : ScheduleRowPlace.parse(row);
+      return (row.isMoving === true) ? ScheduleRowMoving.parse(row) : ScheduleRowPlace.parse(row);
     });
     raw.getLatLngList = Schedule.prototype.getLatLngList;
     return raw;
