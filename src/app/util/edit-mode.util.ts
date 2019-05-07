@@ -3,7 +3,8 @@ export class EditModeUtil {
   off = true;
 
   constructor(
-    private onSaved: Function
+    private onSaved?: Function,
+    private onEdit?: Function
   ) {}
 
   get onDisplay() {
@@ -18,6 +19,8 @@ export class EditModeUtil {
     this.off = !this.off;
     if (this.off) {
       this.onSaved();
+    } else {
+      this.onEdit();
     }
   }
 }

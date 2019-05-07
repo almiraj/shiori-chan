@@ -4,18 +4,21 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { v4 as uuid } from 'uuid';
 
 import { Plan } from '../entity/plan';
-import { PlanTheme } from '../entity/plan-theme';
-import { Schedule } from '../entity/schedule';
-import { ScheduleRowMoving } from '../entity/schedule-row-moving';
-import { ScheduleRowPlace } from '../entity/schedule-row-place';
-import { ViechleType } from '../entity/viechle-type';
-import { LatLng } from '../entity/lat-lng';
+import { PlanTheme } from '../constant/plan-theme';
 
 @Injectable()
 export class PlanService {
   constructor(
     private afs: AngularFirestore
   ) {}
+
+  static toThemeImgPathes(plans: Array<Plan>): Array<PlanTheme> {
+    const imgPathes = [];
+    for (const p of plans) {
+      imgPathes.push('./assets/' + p.theme.name + '.jpg');
+    }
+    return imgPathes;
+  }
 
   private fromLocal(): Array<Plan> {
     return JSON.parse(localStorage.getItem('plans'));
@@ -302,7 +305,10 @@ export class PlanService {
       ],
       'id': 'e1a95c28-d3bf-49b6-a2a1-ce73264e66fb:c636042b-5e17-4dac-a11d-45a196a04938',
       'name': '2019/03/03 一泊二日の大阪旅行',
-      'theme': 4,
+      'theme': {
+        'name': 'OSAKA',
+        'idx': 4
+      },
       'fromYmd': '2019/02/19',
       'baggage': 'くつした\nシャンプー\n折り畳み傘'
     })];

@@ -1,4 +1,4 @@
-import { Component, Params, ViewChild, ElementRef, Inject, OnsNavigator } from 'ngx-onsenui';
+import { Component, Params, ViewChild, ElementRef, OnsNavigator } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 import { timer } from 'rxjs';
 
@@ -6,8 +6,7 @@ import { Plan } from '../entity/plan';
 import { Schedule } from '../entity/schedule';
 import { ScheduleRowPlace } from '../entity/schedule-row-place';
 import { ScheduleRowMoving } from '../entity/schedule-row-moving';
-import { PlanTheme } from '../entity/plan-theme';
-import { EnumUtil } from '../util/enum.util';
+import { PlanTheme } from '../constant/plan-theme';
 import { EditModeUtil } from '../util/edit-mode.util';
 import { PlanService } from '../service/plan.service';
 import { ShareService } from '../service/share.service';
@@ -28,7 +27,7 @@ import { EventEmitter } from 'protractor';
       </ons-toolbar>
       <div class="content">
         <ons-card>
-          <div *ngIf="headEdit.off" class="pencil" (click)="headEdit.toggle() && (themesInitIdx = plan.theme)">
+          <div *ngIf="headEdit.off" class="pencil" (click)="headEdit.toggle()">
             <i class="fas fa-pencil-alt"></i>
           </div>
           <div *ngIf="headEdit.on" class="pencil check" (click)="headEdit.toggle()">
@@ -42,8 +41,8 @@ import { EventEmitter } from 'protractor';
             <div id="theme-edit-left">
               <ons-carousel #themes fullscreen swipeable auto-scroll overscrollable auto-scroll-ratio="0"
                   [attr.initial-index]="themesInitIdx" (postchange)="selectTheme()">
-                <ons-carousel-item *ngFor="let theme of planThemes; let i = index">
-                  <img [src]="theme | themeImg">
+                <ons-carousel-item *ngFor="let planTheme of planThemes; let i = index">
+                  <img [src]="planTheme | themeImg">
                 </ons-carousel-item>
               </ons-carousel>
             </div>
@@ -153,7 +152,7 @@ export class PlanDetailComponent {
   headEdit: EditModeUtil;
   baggageEdit: EditModeUtil;
   schedulesEdit: EditModeUtil;
-  planThemes = EnumUtil.indexes(PlanTheme);
+  planThemes = PlanTheme.values();
   emitter: EventEmitter;
   plan: Plan;
   themesInitIdx = 0;
@@ -167,13 +166,16 @@ export class PlanDetailComponent {
   ) {
     this.plan = params.data.plan;
     this.emitter = params.data.emitter;
-    this.headEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['theme', 'name']));
+    this.headEdit = new EditModeUtil(
+      () => this.planService.savePlan(this.plan, ['theme', 'name']),
+      () => this.themesInitIdx = this.plan.theme.idx
+    );
     this.baggageEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['baggage']));
     this.schedulesEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['schedules']));
   }
 
   selectTheme() {
-    this.plan.theme = this.themesRef.nativeElement.getActiveIndex();
+    this.plan.theme = PlanTheme.valueOf(this.themesRef.nativeElement.getActiveIndex());
   }
   swipeSchedule(i: number) {
     this.schedulesRef.nativeElement.setActiveIndex(i);
