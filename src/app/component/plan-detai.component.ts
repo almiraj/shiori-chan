@@ -202,23 +202,23 @@ export class PlanDetailComponent {
     ons.openActionSheet({
       title: '項目を追加する',
       cancelable: true,
-      buttons: [ '移動手段', '場所／行動', { label: 'キャンセル', icon: 'md-close' } ],
+      buttons: [ '場所', '移動手段', { label: 'キャンセル', icon: 'md-close' } ],
       callback: (type: number) => {
         if (type === 0) {
+          // 場所
+          if (i !== null) {
+            this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowPlace());
+          } else {
+            this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowPlace());
+          }
+          return;
+        }
+        if (type === 1) {
           // 移動手段
           if (i !== null) {
             this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowMoving());
           } else {
             this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowMoving());
-          }
-          return;
-        }
-        if (type === 1) {
-          // 場所／行動
-          if (i !== null) {
-            this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowPlace());
-          } else {
-            this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowPlace());
           }
           return;
         }
