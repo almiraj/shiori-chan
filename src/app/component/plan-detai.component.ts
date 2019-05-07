@@ -75,7 +75,7 @@ import { EventEmitter } from 'protractor';
               <i class="fas fa-plus" (click)="addSchedule()"></i>
             </div>
           </ons-carousel-cover>
-          <ons-carousel #schedules fullscreen swipeable auto-scroll overscrollable (postchange)="selectSchedule()">
+          <ons-carousel #schedules fullscreen auto-scroll overscrollable (postchange)="selectSchedule()">
             <ons-carousel-item *ngFor="let schedule of plan.schedules; let i = index">
               <ons-card>
                 <div *ngIf="schedulesEdit.off" class="pencil" (click)="schedulesEdit.toggle()">
