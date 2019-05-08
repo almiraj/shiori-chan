@@ -38,6 +38,8 @@ import { EventEmitter } from 'protractor';
             <div class="title">{{plan.name}}</div>
           </div>
           <div *ngIf="headEdit.on">
+            <i id="theme-carousel-button-left" class="fas fa-chevron-circle-left" (click)="themes.prev()"></i>
+            <i id="theme-carousel-button-right" class="fas fa-chevron-circle-right" (click)="themes.next()"></i>
             <div id="theme-edit-left">
               <ons-carousel #themes fullscreen swipeable auto-scroll overscrollable auto-scroll-ratio="0"
                   [attr.initial-index]="themesInitIdx" (postchange)="selectTheme()">
@@ -49,7 +51,7 @@ import { EventEmitter } from 'protractor';
             <div id="theme-edit-right">
               <!--<ons-input type="file"></ons-input>-->
             </div>
-            <ons-input type="text" id="planNameInput" modifier="material underbar" [(ngModel)]="plan.name"></ons-input>
+            <ons-input type="text" id="plan-name-input" modifier="material underbar" [(ngModel)]="plan.name"></ons-input>
           </div>
         </ons-card>
         <ons-card #buggage>
@@ -123,7 +125,9 @@ import { EventEmitter } from 'protractor';
     'ons-card { position: relative; padding-bottom: 20px; }',
     '.pencil { position: absolute; top: 6px; right: 6px; font-size: 1.2em; color: #0076ff; z-index: 100; }',
     '.check { color: #ff1a33; }',
-    '#planNameInput { width: 100%; }',
+    '#theme-carousel-button-left { position: absolute; top: 50%; left: 32px; margin-top: -1em; color: #fff; font-size: 2em; z-index: 1;}',
+    '#theme-carousel-button-right { position: absolute; top: 50%; right: 32px; margin-top: -1em; color: #fff; font-size: 2em; z-index: 1;}',
+    '#plan-name-input { width: 100%; }',
     '.buggage-area { position: relative; }',
     '.buggage-area .buggage-area-abs { position: absolute; width: 100%; height: 100%; }',
     '.buggage-area textarea { width: 100%; height: 100%; margin: 0; padding: 0; border-width: 0 4px 0 0; border-color: #ff1a33; }',
