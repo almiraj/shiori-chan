@@ -62,35 +62,31 @@ export class PlanListComponent {
   }
   createPlan() {
     ons.openActionSheet({
-      cancelable: true,
       title: 'プラン作成',
       buttons: [ '新しいプランを作成', '共有されたプランから作成', { label: 'キャンセル', icon: 'md-close' } ],
-      callback: (type: number) => {
-        if (type === 0) {
-          this.createNewPlan();
-        } else if (type === 1) {
-          this.createSharedPlan();
-        }
+      cancelable: true
+    }).then((type: number) => {
+      if (type === 0) {
+        this.createNewPlan();
+      } else if (type === 1) {
+        this.createSharedPlan();
       }
     });
   }
   createNewPlan() {
-    ons.notification.prompt({
-      cancelable: true,
-      title: '',
-      message: 'プラン名を入力してください',
-      buttonLabel: 'OK',
-      callback: (name: string) => {
-        if (name) {
-          this.planService.createNewPlan(name)
-            .then(p => {
-              if (!this.planService.addPlan(p)) {
-                throw new Error('プラン追加に失敗しました');
-              }
-              this.plans.unshift(p);
-            });
+    ons.notification.prompt({ title: '', message: 'プラン名を入力してください', buttonLabel: 'OK', cancelable: true })
+      .then(_name => {
+        if (!_name) {
+          return;
         }
-      }
+        const name = String(_name);
+        this.planService.createNewPlan(name)
+        .then(p => {
+          if (!this.planService.addPlan(p)) {
+            throw new Error('プラン追加に失敗しました');
+          }
+          this.plans.unshift(p);
+        });
     });
   }
   createSharedPlan() {

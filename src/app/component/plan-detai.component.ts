@@ -201,43 +201,40 @@ export class PlanDetailComponent {
     this.scheduleIdx = this.schedulesRef.nativeElement.getActiveIndex();
   }
   addSchedule() {
-    ons.notification.prompt({
-      cancelable: true,
-      title: '',
-      message: 'スケジュール名を入力してください',
-      callback: (name: string) => {
-        if (name) {
-          const sched = new Schedule(name);
-          const idx = this.plan.schedules.push(sched) - 1;
-          timer(0).subscribe(() => this.swipeSchedule(idx)); // 追加したスケジュールを表示する
+    ons.notification.prompt({ title: '', message: 'スケジュール名を入力してください', cancelable: true })
+      .then(_name => {
+        if (!_name) {
+          return;
         }
-      }
-    });
+        const name = String(_name);
+        const sched = new Schedule(name);
+        const idx = this.plan.schedules.push(sched) - 1;
+        timer(0).subscribe(() => this.swipeSchedule(idx)); // 追加したスケジュールを表示する
+      });
   }
   addScheduleRow(i: number) {
     ons.openActionSheet({
       title: '項目を追加する',
-      cancelable: true,
       buttons: [ '場所', '移動手段', { label: 'キャンセル', icon: 'md-close' } ],
-      callback: (type: number) => {
-        if (type === 0) {
-          // 場所
-          if (i !== null) {
-            this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowPlace());
-          } else {
-            this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowPlace());
-          }
-          return;
+      cancelable: true
+    }).then((type: number) => {
+      if (type === 0) {
+        // 場所
+        if (i !== null) {
+          this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowPlace());
+        } else {
+          this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowPlace());
         }
-        if (type === 1) {
-          // 移動手段
-          if (i !== null) {
-            this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowMoving());
-          } else {
-            this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowMoving());
-          }
-          return;
+        return;
+      }
+      if (type === 1) {
+        // 移動手段
+        if (i !== null) {
+          this.plan.schedules[this.scheduleIdx].rows.splice(i, 0, new ScheduleRowMoving());
+        } else {
+          this.plan.schedules[this.scheduleIdx].rows.push(new ScheduleRowMoving());
         }
+        return;
       }
     });
   }
