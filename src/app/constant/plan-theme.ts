@@ -1,14 +1,19 @@
 class PlanTheme {
   static CAFE = new PlanTheme('CAFE');
   static LAWN = new PlanTheme('LAWN');
-  static STUDY = new PlanTheme('STUDY');
   static ROAD = new PlanTheme('ROAD');
   static GOLF = new PlanTheme('GOLF');
+  static TENIS = new PlanTheme('TENIS');
+  static BOWL = new PlanTheme('BOWL');
+  static SKI = new PlanTheme('SKI');
   static SEA = new PlanTheme('SEA');
   static MOUNTAIN = new PlanTheme('MOUNTAIN');
   static KYOTO = new PlanTheme('KYOTO');
   static OSAKA = new PlanTheme('OSAKA');
+  static USA = new PlanTheme('USA');
   static EUROPE = new PlanTheme('EUROPE');
+  static AFRICA = new PlanTheme('AFRICA');
+  static EGYPT = new PlanTheme('EGYPT');
   static VALUES: Array<PlanTheme>;
 
   private static NAMES: Array<string>;
