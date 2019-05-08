@@ -1,26 +1,35 @@
 export class EditModeUtil {
-  on = false;
-  off = true;
+  private _on = false;
+  private _off = true;
+  private _onSaved = new Function();
+  private _onEdit = new Function();
 
-  constructor(
-    private onSaved?: Function,
-    private onEdit?: Function
-  ) {}
-
+  get on() {
+    return this._on;
+  }
+  get off() {
+    return this._off;
+  }
   get onDisplay() {
-    return this.on ? 'block' : 'none';
+    return this._on ? 'block' : 'none';
   }
   get offDisplay() {
-    return this.off ? 'block' : 'none';
+    return this._off ? 'block' : 'none';
   }
 
+  onSaved(_onSaved: Function) {
+    this._onSaved = _onSaved;
+  }
+  onEdit(_onEdit: Function) {
+    this._onEdit = _onEdit;
+  }
   toggle() {
-    this.on = !this.on;
-    this.off = !this.off;
-    if (this.off) {
-      this.onSaved();
+    this._on = !this._on;
+    this._off = !this._off;
+    if (this._on) {
+      this._onEdit();
     } else {
-      this.onEdit();
+      this._onSaved();
     }
   }
 }

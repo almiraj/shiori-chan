@@ -44,7 +44,7 @@ export class PlanListComponent {
     private navi: OnsNavigator,
     private planService: PlanService
   ) {
-    planService.getPlans().then(plans => this.plans = plans);
+    this.plans = planService.getPlans();
   }
 
   toDetail(plan: Plan) {
@@ -54,13 +54,16 @@ export class PlanListComponent {
         this.plans = this.plans.filter(p => p.id !== plan.id);
         this.planService.saveAllPlan(this.plans);
       }
+      if (event === 'refresh') {
+        this.plans = this.planService.getPlans();
+      }
     })
     this.navi.element.pushPage(PlanDetailComponent, { data: { plan: plan, emitter: emitter } });
   }
   createPlan() {
     ons.openActionSheet({
-      title: 'プラン作成',
       cancelable: true,
+      title: 'プラン作成',
       buttons: [ '新しいプランを作成', '共有されたプランから作成', { label: 'キャンセル', icon: 'md-close' } ],
       callback: (type: number) => {
         if (type === 0) {
@@ -91,12 +94,9 @@ export class PlanListComponent {
     });
   }
   createSharedPlan() {
-    ons.notification.prompt({
-      cancelable: true,
-      title: '',
-      message: '共有IDを入力してください',
-      buttonLabel: 'OK',
-      callback: (sharedId: string) => {
+    ons.notification.prompt({ title: '', message: '共有IDを入力してください', buttonLabel: 'OK', cancelable: true })
+      .then(_sharedId => {
+        const sharedId = String(_sharedId);
         if (sharedId) {
           this.planService.createSharedPlan(sharedId)
             .then(createdPlan => {
@@ -106,20 +106,17 @@ export class PlanListComponent {
                 return;
               }
               // 追加できない場合は確認してから更新する
-              ons.notification.confirm({
-                message: '共有されたプランを更新してよろしいですか？',
-                cancelable: true,
-                callback: (i: number) => {
+              ons.notification.confirm({ cancelable: true, message: '共有されたプランを更新してよろしいですか？' })
+                .then(_i => {
+                  const i = Number(_i);
                   if (i === 1) {
                     this.planService.overwritePlan(createdPlan);
                     this.plans = this.plans.map(p => (p.id === createdPlan.id) ? createdPlan : p);
                   }
-                }
-              });
+                });
             })
-            .catch(e => ons.notification.alert({ title: '', message: e }));
+            .catch(e => ons.notification.alert({ title: '', message: e, cancelable: true }));
         }
-      }
-    });
+      });
   }
 }

@@ -56,17 +56,28 @@ export class PlanService {
         );
     });
   }
-  getPlans(): Promise<Plan[]> {
+  getPlans(): Plan[] {
     // プランが保存されていればそれを返却する
     const plans = this.fromLocal();
     if (plans) {
       plans.map(plan => Plan.parse(plan));
-      return Promise.resolve(plans);
+      return plans;
     }
     // まだプランが保存されてなければサンプルを保存しつつ返却する
     const samplePlans = this.getSamplePlans();
     this.saveAllPlan(samplePlans);
-    return Promise.resolve(samplePlans);
+    return samplePlans;
+  }
+  getPlan(planId: string): Plan {
+    const plans = this.fromLocal();
+    if (plans) {
+      for (const plan of plans) {
+        if (plan.id === planId) {
+          return plan;
+        }
+      }
+    }
+    throw new Error('一致するプランが見つかりません');
   }
   addPlan(newPlan: Plan): boolean {
     const plans = this.fromLocal();

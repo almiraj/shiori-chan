@@ -1,4 +1,4 @@
-import { Component, Params, ViewChild, ElementRef, OnsNavigator } from 'ngx-onsenui';
+import { Component, Params, ViewChild, ElementRef, OnsNavigator, NgZone } from 'ngx-onsenui';
 import * as ons from 'onsenui';
 import { timer } from 'rxjs';
 
@@ -149,29 +149,35 @@ import { EventEmitter } from 'protractor';
 export class PlanDetailComponent {
   @ViewChild('themes') themesRef: ElementRef;
   @ViewChild('schedules') schedulesRef: ElementRef;
-  headEdit: EditModeUtil;
-  baggageEdit: EditModeUtil;
-  schedulesEdit: EditModeUtil;
+  headEdit = new EditModeUtil();
+  baggageEdit = new EditModeUtil();
+  schedulesEdit = new EditModeUtil();
+  editModeUtils = [this.headEdit, this.baggageEdit, this.schedulesEdit];
   planThemes = PlanTheme.values();
   emitter: EventEmitter;
   plan: Plan;
   themesInitIdx = 0;
   scheduleIdx = 0;
+  willForceBack = false;
 
   constructor(
+    private ngZone: NgZone,
     private navi: OnsNavigator,
     private planService: PlanService,
     private shareService: ShareService,
     params: Params,
   ) {
+    this.navi.element.addEventListener('prepop', ($event: CustomEvent) => {
+      if (!this.willForceBack) {
+        this.ngZone.run(() => this.prepop($event));
+      }
+    });
     this.plan = params.data.plan;
     this.emitter = params.data.emitter;
-    this.headEdit = new EditModeUtil(
-      () => this.planService.savePlan(this.plan, ['theme', 'name']),
-      () => this.themesInitIdx = this.plan.theme.idx
-    );
-    this.baggageEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['baggage']));
-    this.schedulesEdit = new EditModeUtil(() => this.planService.savePlan(this.plan, ['schedules']));
+    this.headEdit.onSaved(() => this.planService.savePlan(this.plan, ['theme', 'name']));
+    this.headEdit.onEdit(() => this.themesInitIdx = this.plan.theme.idx);
+    this.baggageEdit.onSaved(() => this.planService.savePlan(this.plan, ['baggage']));
+    this.schedulesEdit.onSaved(() => this.planService.savePlan(this.plan, ['schedules']));
   }
 
   selectTheme() {
@@ -226,23 +232,29 @@ export class PlanDetailComponent {
     });
   }
   share() {
+    for (const editModeUtil of this.editModeUtils) {
+      if (editModeUtil.on) {
+        ons.notification.alert({ title: '', message: '編集中になっている個所を確定させてから再度お試しください', cancelable: true });
+        return;
+      }
+    }
+
     this.shareService.sharePlan(this.plan)
       .then(sharedId => {
-        ons.notification.prompt({ title: '共有コード', message: '以下のコードをコピーして<br>共有したい人に伝えてください<br><br>', cancelable: true })
-          .then(element => console.log(element));
+        ons.notification.prompt({ title: '共有コード', message: '以下のコードをコピーして<br>共有したい人に伝えてください<br><br>', cancelable: true });
         const input = <HTMLInputElement>document.querySelector('.alert-dialog .text-input');
         input.setAttribute('style', 'text-align: center;');
         input.setAttribute('value', sharedId);
         input.onfocus = () => input.select();
       })
-      .catch(e => ons.notification.alert({ title: '', message: 'サーバ接続に失敗しました' }));
+      .catch(e => ons.notification.alert({ title: '', message: 'サーバ接続に失敗しました', cancelable: true }));
   }
   deleteSchedule(deleteIdx: number) {
     ons.notification.confirm({ message: 'このスケジュールを削除します', cancelable: true })
       .then(i => {
         if (Number(i) === 1) {
           this.plan.schedules = this.plan.schedules.filter((val, idx) => idx !== deleteIdx);
-          ons.notification.alert({ title: '', message: 'スケジュールを削除しました' });
+          ons.notification.alert({ title: '', message: 'スケジュールを削除しました', cancelable: true });
         }
       });
   }
@@ -251,9 +263,31 @@ export class PlanDetailComponent {
       .then(i => {
         if (Number(i) === 1) {
           this.emitter.emit('deletePlan');
-          ons.notification.alert({ title: '', message: 'このプランは削除されました' })
+          ons.notification.alert({ title: '', message: 'このプランは削除されました', cancelable: true })
             .then(() => this.navi.element.popPage());
         }
       });
+  }
+  prepop($event: CustomEvent) {
+    // ポップアップ前に遷移するのを防ぐために一度キャンセルする
+    if (!this.willForceBack) {
+      $event['cancel']();
+    }
+    for (const editModeUtil of this.editModeUtils) {
+      if (editModeUtil.on) {
+        ons.notification.confirm({ message: '編集中の箇所は破棄されますがよろしいですか？', cancelable: true })
+          .then(i => {
+            if (Number(i) === 1) {
+              // 変更を破棄する
+              this.emitter.emit('refresh');
+              this.willForceBack = true;
+              this.navi.element.popPage();
+            }
+          });
+        return;
+      }
+    }
+    this.willForceBack = true;
+    this.navi.element.popPage();
   }
 }
