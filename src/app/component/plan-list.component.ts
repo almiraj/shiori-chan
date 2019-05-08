@@ -96,27 +96,28 @@ export class PlanListComponent {
   createSharedPlan() {
     ons.notification.prompt({ title: '', message: '共有IDを入力してください', buttonLabel: 'OK', cancelable: true })
       .then(_sharedId => {
-        const sharedId = String(_sharedId);
-        if (sharedId) {
-          this.planService.createSharedPlan(sharedId)
-            .then(createdPlan => {
-              // 追加できる場合は普通に追加する
-              if (this.planService.addPlan(createdPlan)) {
-                this.plans.unshift(createdPlan);
-                return;
-              }
-              // 追加できない場合は確認してから更新する
-              ons.notification.confirm({ cancelable: true, message: '共有されたプランを更新してよろしいですか？' })
-                .then(_i => {
-                  const i = Number(_i);
-                  if (i === 1) {
-                    this.planService.overwritePlan(createdPlan);
-                    this.plans = this.plans.map(p => (p.id === createdPlan.id) ? createdPlan : p);
-                  }
-                });
-            })
-            .catch(e => ons.notification.alert({ title: '', message: e, cancelable: true }));
+        if (!_sharedId) {
+          return;
         }
+        const sharedId = String(_sharedId);
+        this.planService.createSharedPlan(sharedId)
+          .then(createdPlan => {
+            // 追加できる場合は普通に追加する
+            if (this.planService.addPlan(createdPlan)) {
+              this.plans.unshift(createdPlan);
+              return;
+            }
+            // 追加できない場合は確認してから更新する
+            ons.notification.confirm({ cancelable: true, message: '共有されたプランを更新してよろしいですか？' })
+              .then(_i => {
+                const i = Number(_i);
+                if (i === 1) {
+                  this.planService.overwritePlan(createdPlan);
+                  this.plans = this.plans.map(p => (p.id === createdPlan.id) ? createdPlan : p);
+                }
+              });
+          })
+          .catch(e => ons.notification.alert({ title: '', message: e, cancelable: true }));
       });
   }
 }
