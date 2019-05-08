@@ -197,7 +197,6 @@ export class PlanDetailComponent {
       callback: (name: string) => {
         if (name) {
           const sched = new Schedule(name);
-          sched.rows.push(new ScheduleRowPlace());
           const idx = this.plan.schedules.push(sched) - 1;
           timer(0).subscribe(() => this.swipeSchedule(idx)); // 追加したスケジュールを表示する
         }
