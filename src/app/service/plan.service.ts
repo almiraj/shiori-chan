@@ -316,10 +316,7 @@ export class PlanService {
       ],
       'id': 'e1a95c28-d3bf-49b6-a2a1-ce73264e66fb:c636042b-5e17-4dac-a11d-45a196a04938',
       'name': '2019/03/03 一泊二日の大阪旅行',
-      'theme': {
-        'name': 'OSAKA',
-        'idx': 4
-      },
+      'theme': { 'name': 'OSAKA' },
       'fromYmd': '2019/02/19',
       'baggage': 'くつした\nシャンプー\n折り畳み傘'
     })];

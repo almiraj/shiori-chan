@@ -38,8 +38,8 @@ import { EventEmitter } from 'protractor';
             <div class="title">{{plan.name}}</div>
           </div>
           <div *ngIf="headEdit.on">
-            <i id="theme-carousel-button-left" class="fas fa-chevron-circle-left" (click)="themes.prev()"></i>
-            <i id="theme-carousel-button-right" class="fas fa-chevron-circle-right" (click)="themes.next()"></i>
+            <i *ngIf="isFirstTheme" id="theme-carousel-button-left" class="fas fa-chevron-circle-left" (click)="themes.prev()"></i>
+            <i *ngIf="isLastTheme" id="theme-carousel-button-right" class="fas fa-chevron-circle-right" (click)="themes.next()"></i>
             <div id="theme-edit-left">
               <ons-carousel #themes fullscreen swipeable auto-scroll overscrollable auto-scroll-ratio="0"
                   [attr.initial-index]="themesInitIdx" (postchange)="selectTheme()">
@@ -157,7 +157,7 @@ export class PlanDetailComponent {
   baggageEdit = new EditModeUtil();
   schedulesEdit = new EditModeUtil();
   editModeUtils = [this.headEdit, this.baggageEdit, this.schedulesEdit];
-  planThemes = PlanTheme.values();
+  planThemes = PlanTheme.VALUES;
   emitter: EventEmitter;
   plan: Plan;
   themesInitIdx = 0;
@@ -182,6 +182,13 @@ export class PlanDetailComponent {
     this.headEdit.onEdit(() => this.themesInitIdx = this.plan.theme.idx);
     this.baggageEdit.onSaved(() => this.planService.savePlan(this.plan, ['baggage']));
     this.schedulesEdit.onSaved(() => this.planService.savePlan(this.plan, ['schedules']));
+  }
+
+  get isFirstTheme() {
+    return (this.plan.theme.idx !== 0);
+  }
+  get isLastTheme() {
+    return (this.plan.theme.idx !== this.planThemes.length - 1);
   }
 
   selectTheme() {

@@ -1,38 +1,40 @@
-export class PlanTheme {
-  private static valuesCache: Array<PlanTheme>;
+class PlanTheme {
+  static CAFE = new PlanTheme('CAFE');
+  static LAWN = new PlanTheme('LAWN');
+  static STUDY = new PlanTheme('STUDY');
+  static ROAD = new PlanTheme('ROAD');
+  static GOLF = new PlanTheme('GOLF');
+  static SEA = new PlanTheme('SEA');
+  static MOUNTAIN = new PlanTheme('MOUNTAIN');
+  static KYOTO = new PlanTheme('KYOTO');
+  static OSAKA = new PlanTheme('OSAKA');
+  static EUROPE = new PlanTheme('EUROPE');
+  static VALUES: Array<PlanTheme>;
 
-  static CAFE = new PlanTheme('CAFE', 0);
-  static SEA = new PlanTheme('SEA', 1);
-  static ROAD = new PlanTheme('ROAD', 2);
-  static KYOTO = new PlanTheme('KYOTO', 3);
-  static OSAKA = new PlanTheme('OSAKA', 4);
-  static EUROPE = new PlanTheme('EUROPE', 5);
-  static GOLF = new PlanTheme('GOLF', 6);
-  static MOUNTAIN = new PlanTheme('MOUNTAIN', 7);
-  static RUNNING = new PlanTheme('RUNNING', 8);
+  private static NAMES: Array<string>;
 
   private constructor(
-    public name: string,
-    public idx: number
+    public name: string
   ) {}
 
-  static parse(raw: any) {
-    return new PlanTheme(raw.name, raw.idx);
+  get idx(): number {
+    return PlanTheme.NAMES.indexOf(this.name);
   }
-  static values(): Array<PlanTheme> {
-    if (PlanTheme.valuesCache) {
-      return PlanTheme.valuesCache;
-    }
-    const values = [];
+
+  static initilaze() {
+    this.VALUES = [];
     for (const k in PlanTheme) {
       if (PlanTheme[k] instanceof PlanTheme) {
-        values.push(PlanTheme[k]);
+        this.VALUES.push(PlanTheme[k]);
       }
     }
-    return PlanTheme.valuesCache = values;
+    this.NAMES = this.VALUES.map(theme => theme.name);
+  }
+  static parse(raw: any) {
+    return new PlanTheme(raw.name);
   }
   static valueOf(idx: number): PlanTheme {
-    for (const planTheme of PlanTheme.values()) {
+    for (const planTheme of this.VALUES) {
       if (planTheme.idx === idx) {
         return planTheme;
       }
@@ -40,3 +42,5 @@ export class PlanTheme {
     throw new Error('Not found value of ' + idx);
   }
 }
+PlanTheme.initilaze();
+export { PlanTheme };
