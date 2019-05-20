@@ -28,6 +28,7 @@
     "@angular/router": "~7.2.0",
     "@fortawesome/fontawesome-free": "^5.7.2",
     "cordova-android": "^7.1.4",
+    "cordova-ios": "^4.5.5",
     "cordova-plugin-whitelist": "1",
     "core-js": "^2.5.4",
     "firebase": "^5.9.4",
@@ -69,7 +70,8 @@
       "cordova-plugin-whitelist": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

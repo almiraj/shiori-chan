@@ -1,2 +1,2 @@
-copy resources\ios\icon\* platforms\ios\Alexandrite\Images.xcassets\AppIcon.appiconset\
-copy resources\ios\splash\* platforms\ios\Alexandrite\Images.xcassets\LaunchImage.launchimage\
+copy resources\ios\icon\* "platforms\ios\Shiori chan\Images.xcassets\AppIcon.appiconset\"
+copy resources\ios\splash\* "platforms\ios\Shiori chan\Images.xcassets\LaunchImage.launchimage\"

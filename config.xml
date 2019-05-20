@@ -70,4 +70,5 @@
     <hook src="hooks/copy-ios-icon-splash.bat" type="after_platform_add" />
     <hook src="hooks/copy-ios-icon-splash.sh" type="after_platform_add" />
     <engine name="android" spec="^7.1.4" />
+    <engine name="ios" spec="~4.5.5" />
 </widget>
