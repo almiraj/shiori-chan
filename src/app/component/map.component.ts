@@ -97,6 +97,17 @@ export class MapComponent implements OnInit {
           this.zoom = 17;
         });
       });
+
+      // https://gist.github.com/schoenobates/ef578a02ac8ab6726487
+      // need to stop prop of the touchend event
+      if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) {
+        setTimeout(function() {
+          const container = document.getElementsByClassName('pac-container')[0];
+          container.addEventListener('touchend', function(e) {
+            e.stopImmediatePropagation();
+          });
+        }, 500);
+      }
     });
   }
 
