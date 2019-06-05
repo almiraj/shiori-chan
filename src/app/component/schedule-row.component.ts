@@ -18,7 +18,7 @@ import { MapComponent } from './map.component';
           <i class="fas fa-flag-checkered"></i>
         </div>
         <div *ngIf="shcedRowMoving && isEdit" class="left-icon-viechle">
-          <label *ngFor="let v of ViechleTypeUtil.values(); let i = index" (change)="changeViechle(v)">
+          <label *ngFor="let v of ViechleTypeUtil.values(); let i = index" (click)="changeViechle(v)"><!--changeはMobile Safariで発火しない-->
             <input type="radio" [name]="'vt-' + i" [value]="shcedRowMoving.viechleType" [checked]="v === shcedRowMoving.viechleType">
             <i [ngClass]="{
               'fas': true,
