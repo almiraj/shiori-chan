@@ -103,6 +103,9 @@ export class MapComponent implements OnInit {
       if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) {
         setTimeout(function() {
           const container = document.getElementsByClassName('pac-container')[0];
+          container.addEventListener('click', function(e) {
+            e.stopImmediatePropagation();
+          });
           container.addEventListener('touchend', function(e) {
             e.stopImmediatePropagation();
           });
