@@ -36,7 +36,7 @@ import { LatLng } from '../entity/lat-lng';
   `]
 })
 export class MapComponent implements OnInit {
-  shcedRowPlace: ScheduleRowPlace;
+  schedRowPlace: ScheduleRowPlace;
   readOnly: boolean;
   searchControl: FormControl;
   latitude = 34.6938877; // 大阪市役所
@@ -51,15 +51,15 @@ export class MapComponent implements OnInit {
     private ngZone: NgZone,
     params: Params
   ) {
-    this.shcedRowPlace = params.data.shcedRowPlace;
+    this.schedRowPlace = params.data.schedRowPlace;
     this.readOnly = params.data.readOnly;
   }
 
   ngOnInit() {
     // set google maps defaults
-    if (this.shcedRowPlace.latLng) {
-      this.latitude = this.shcedRowPlace.latLng.lat;
-      this.longitude = this.shcedRowPlace.latLng.lng;
+    if (this.schedRowPlace.latLng) {
+      this.latitude = this.schedRowPlace.latLng.lat;
+      this.longitude = this.schedRowPlace.latLng.lng;
       this.zoom = 17;
     } else if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -75,8 +75,8 @@ export class MapComponent implements OnInit {
     // load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
       const autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {});
-      if (this.shcedRowPlace.address) {
-        this.searchElementRef.nativeElement.value = this.shcedRowPlace.address;
+      if (this.schedRowPlace.address) {
+        this.searchElementRef.nativeElement.value = this.schedRowPlace.address;
       }
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
@@ -92,8 +92,8 @@ export class MapComponent implements OnInit {
           this.searchElementRef.nativeElement.value = place.name;
           this.latitude = place.geometry.location.lat();
           this.longitude = place.geometry.location.lng();
-          this.shcedRowPlace.address = place.name;
-          this.shcedRowPlace.latLng = new LatLng(place.geometry.location.lat(), place.geometry.location.lng());
+          this.schedRowPlace.address = place.name;
+          this.schedRowPlace.latLng = new LatLng(place.geometry.location.lat(), place.geometry.location.lng());
           this.zoom = 17;
         });
       });
@@ -124,7 +124,7 @@ export class MapComponent implements OnInit {
     this.latitude = event.coords.lat;
     this.longitude = event.coords.lng;
 
-    this.shcedRowPlace.address = ''; // アンカー変更時はクリア
-    this.shcedRowPlace.latLng = new LatLng(event.coords.lat, event.coords.lng);
+    this.schedRowPlace.address = ''; // アンカー変更時はクリア
+    this.schedRowPlace.latLng = new LatLng(event.coords.lat, event.coords.lng);
   }
 }

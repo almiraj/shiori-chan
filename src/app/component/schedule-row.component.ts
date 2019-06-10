@@ -13,8 +13,8 @@ import { MapComponent } from './map.component';
   template: `
     <ons-list-item [ngClass]="{ 'edit-item': isEdit }">
       <div class="rel">
-        <div *ngIf="shcedRowPlace" class="left-icon"
-            [ngClass]="{ 'left-icon-edit': isEdit, 'with-to-time': shcedRowPlace.fromTime !== shcedRowPlace.toTime }">
+        <div *ngIf="schedRowPlace" class="left-icon"
+            [ngClass]="{ 'left-icon-edit': isEdit, 'with-to-time': schedRowPlace.fromTime !== schedRowPlace.toTime }">
           <i class="fas fa-flag-checkered"></i>
         </div>
         <div *ngIf="shcedRowMoving && isEdit" class="left-icon-viechle">
@@ -38,15 +38,15 @@ import { MapComponent } from './map.component';
             }"></i>
           </label>
         </div>
-        <div *ngIf="shcedRowPlace && !isEdit" class="fromToTime">
-          {{shcedRowPlace.fromTime}}
+        <div *ngIf="schedRowPlace && !isEdit" class="fromToTime">
+          {{schedRowPlace.fromTime}}
           <br>
-          <span *ngIf="shcedRowPlace.fromTime != shcedRowPlace.toTime">{{shcedRowPlace.toTime}}</span>
+          <span *ngIf="schedRowPlace.fromTime != schedRowPlace.toTime">{{schedRowPlace.toTime}}</span>
         </div>
-        <div *ngIf="shcedRowPlace && isEdit" class="fromToTime">
-          <ons-input type="time" modifier="material underbar" [(ngModel)]="shcedRowPlace.fromTime" (change)="syncToTime()"></ons-input>
+        <div *ngIf="schedRowPlace && isEdit" class="fromToTime">
+          <ons-input type="time" modifier="material underbar" [(ngModel)]="schedRowPlace.fromTime" (change)="syncToTime()"></ons-input>
           <br>
-          <ons-input type="time" modifier="material underbar" [(ngModel)]="shcedRowPlace.toTime"></ons-input>
+          <ons-input type="time" modifier="material underbar" [(ngModel)]="schedRowPlace.toTime"></ons-input>
         </div>
         <div *ngIf="shcedRowMoving && !isEdit" class="viechle-type">
           <i [ngClass]="{
@@ -65,17 +65,17 @@ import { MapComponent } from './map.component';
             'fa-helicopter': shcedRowMoving.viechleType === ViechleType.HELICOPTER
           }"></i>
         </div>
-        <div *ngIf="shcedRowPlace && !isEdit" class="description"
-            [ngClass]="{ 'with-to-time': shcedRowPlace.fromTime !== shcedRowPlace.toTime }">
-          {{shcedRowPlace.description}}
+        <div *ngIf="schedRowPlace && !isEdit" class="description"
+            [ngClass]="{ 'with-to-time': schedRowPlace.fromTime !== schedRowPlace.toTime }">
+          {{schedRowPlace.description}}
           <div class="baggage pre">{{row.memo}}</div>
         </div>
         <div *ngIf="shcedRowMoving && !isEdit" class="description interval">
           ({{shcedRowMoving.getIntervalLabel()}})
           <div class="baggage pre">{{row.memo}}</div>
         </div>
-        <div *ngIf="shcedRowPlace && isEdit" class="description-edit">
-          <ons-input type="text" modifier="material underbar" [(ngModel)]="shcedRowPlace.description"></ons-input>
+        <div *ngIf="schedRowPlace && isEdit" class="description-edit">
+          <ons-input type="text" modifier="material underbar" [(ngModel)]="schedRowPlace.description"></ons-input>
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
           </div>
         <div *ngIf="shcedRowMoving && isEdit" class="description-edit">
@@ -83,15 +83,15 @@ import { MapComponent } from './map.component';
           <textarea class="memo" placeholder="メモ書き" [(ngModel)]="row.memo"></textarea>
         </div>
         <div *ngIf="!isEdit">
-          <div *ngIf="shcedRowPlace && shcedRowPlace.latLng" class="right-icon">
-            <i class="fas fa-map-marked-alt link-color" (click)="toMap(shcedRowPlace, true)"></i>
+          <div *ngIf="schedRowPlace && schedRowPlace.latLng" class="right-icon">
+            <i class="fas fa-map-marked-alt link-color" (click)="toMap(schedRowPlace, true)"></i>
           </div>
           <div class="right-icon" *ngIf="row.url">
             <a [href]="row.url" target="_blank">
               <i [ngClass]="{
                 'fas': true,
                 'fa-external-link-alt': true,
-                'with-to-time': shcedRowPlace && shcedRowPlace.fromTime !== shcedRowPlace.toTime
+                'with-to-time': schedRowPlace && schedRowPlace.fromTime !== schedRowPlace.toTime
               }"></i>
             </a>
           </div>
@@ -99,8 +99,8 @@ import { MapComponent } from './map.component';
         <div *ngIf="isEdit">
           <div class="right-icon">
             <i class="far fa-window-close" (click)="confirmDelete()"></i>
-            <div *ngIf="shcedRowPlace" class="right-bottom-icon">
-              <i class="fas fa-map-marked-alt" (click)="toMap(shcedRowPlace)"></i>
+            <div *ngIf="schedRowPlace" class="right-bottom-icon">
+              <i class="fas fa-map-marked-alt" (click)="toMap(schedRowPlace)"></i>
             </div>
           </div>
         </div>
@@ -151,7 +151,7 @@ export class ScheduleRowComponent {
   set row(row: ScheduleRow) { this._row = row; }
   get row(): ScheduleRow { return this._row; }
 
-  get shcedRowPlace(): ScheduleRowPlace {
+  get schedRowPlace(): ScheduleRowPlace {
     if (!this._row.isMoving) {
       return <ScheduleRowPlace>this._row;
     }
@@ -173,10 +173,10 @@ export class ScheduleRowComponent {
   ) {}
 
   syncToTime() {
-    if (!this.shcedRowPlace.toTime || this.shcedRowPlace.toTime === this._prevFromTime) {
-      this.shcedRowPlace.toTime = this.shcedRowPlace.fromTime;
+    if (!this.schedRowPlace.toTime || this.schedRowPlace.toTime === this._prevFromTime) {
+      this.schedRowPlace.toTime = this.schedRowPlace.fromTime;
     }
-    this._prevFromTime = this.shcedRowPlace.fromTime;
+    this._prevFromTime = this.schedRowPlace.fromTime;
   }
   changeViechle(v: ViechleType) {
     if (this.shcedRowMoving) {
@@ -195,7 +195,7 @@ export class ScheduleRowComponent {
       }
     });
   }
-  toMap(shcedRowPlace: ScheduleRowPlace, readOnly?: boolean) {
-    this.navi.element.pushPage(MapComponent, { data: { shcedRowPlace, readOnly} });
+  toMap(schedRowPlace: ScheduleRowPlace, readOnly?: boolean) {
+    this.navi.element.pushPage(MapComponent, { data: { schedRowPlace, readOnly } });
   }
 }
