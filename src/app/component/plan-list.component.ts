@@ -57,8 +57,8 @@ export class PlanListComponent {
       if (event === 'refresh') {
         this.plans = this.planService.getPlans();
       }
-    })
-    this.navi.element.pushPage(PlanDetailComponent, { data: { plan: plan, emitter: emitter } });
+    });
+    this.navi.element.pushPage(PlanDetailComponent, { data: { plan, emitter, toDetailNavi: true } });
   }
   createPlan() {
     ons.openActionSheet({

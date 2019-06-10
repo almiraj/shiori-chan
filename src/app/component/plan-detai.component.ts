@@ -276,6 +276,10 @@ export class PlanDetailComponent {
       });
   }
   prepop($event: CustomEvent) {
+    // このコンポーネントからのpopでない場合、何もしない
+    if (!$event['currentPage']['data']['toDetailNavi']) {
+      return;
+    }
     // ポップアップ前に遷移するのを防ぐために一度キャンセルする
     if (!this.willForceBack) {
       $event['cancel']();
